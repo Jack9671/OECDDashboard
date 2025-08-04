@@ -651,10 +651,10 @@ def pie(df: pd.DataFrame, groupby_var: str, category_name: str, value_filter: st
     df_grouped = df.groupby(groupby_var)[columns_to_count].sum().reset_index()
     
     # Apply value filtering for positive/negative values
-    if value_filter == "Positive Values Only":
+    if value_filter == "Show all contributors to GHS Emissions":
         df_grouped = df_grouped[df_grouped['OBS_VALUE'] >= 0]
         title_suffix = " (Positive Values)"
-    elif value_filter == "Negative Values Only":
+    elif value_filter == "Show all contributors to GHS Absorption":
         df_grouped = df_grouped[df_grouped['OBS_VALUE'] < 0]
         # Convert negative values to positive for display purposes
         df_grouped['OBS_VALUE'] = df_grouped['OBS_VALUE'].abs()
@@ -700,10 +700,10 @@ def tree_map(df: pd.DataFrame, groupby_var: str, category_name: str, value_filte
     df_grouped = df.groupby(groupby_var)[columns_to_count].sum().reset_index()
     
     # Apply value filtering for positive/negative values
-    if value_filter == "Positive Values Only":
+    if value_filter == "Show all contributors to GHS Emissions":
         df_grouped = df_grouped[df_grouped['OBS_VALUE'] >= 0]
         title_suffix = " (Positive Values)"
-    elif value_filter == "Negative Values Only":
+    elif value_filter == "Show all contributors to GHS Absorption":
         df_grouped = df_grouped[df_grouped['OBS_VALUE'] < 0]
         # Convert negative values to positive for display purposes
         df_grouped['OBS_VALUE'] = df_grouped['OBS_VALUE'].abs()
