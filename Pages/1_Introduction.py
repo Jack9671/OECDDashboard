@@ -8,8 +8,7 @@ st.title("📖 Introduction")
 st.markdown("""
 ## About This Dashboard
 
-This interactive dashboard provides comprehensive analysis of environmental indicators from the Organisation for Economic Co-operation and Development (OECD). 
-The platform focuses on key environmental metrics that are crucial for understanding sustainability trends across member countries.
+The OECD Dashboard that allows users to view data visualization on interested time frame, countries, and measures related to two topics and extract insights from the visuals to aid them in international policymaking.The first is topic is greenhouse gas emission, the second topic is nutrient input/output on the agriculture. 
 
 ## 🎯 Objectives
 
