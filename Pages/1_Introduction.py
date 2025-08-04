@@ -8,7 +8,8 @@ st.title("📖 Introduction")
 st.markdown("""
 ## About This Dashboard
 
-The OECD Dashboard allows users to view data visualization on interested time frame, countries, and measures related to two topics and extract insights from the visuals to aid them in international policymaking.The first is topic is greenhouse gas emission, the second topic is nutrient input/output on the agriculture. 
+The OECD Dashboard allows users to view data visualization on interested time frame, countries, and measures related to two topics and extract insights from the visuals to aid them in international policymaking.
+The first is topic is greenhouse gas emission, the second topic is nutrient input/output on the agriculture. 
 
 ## 🎯 Objectives
 
@@ -16,7 +17,6 @@ Our dashboard aims to:
 - **Visualize** complex environmental data in an accessible format
 - **Compare** environmental performance across OECD countries
 - **Track** trends and changes over time
-- **Identify** patterns and correlations in environmental indicators
 
 ## 📊 Data Sources
 
