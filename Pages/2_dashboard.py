@@ -929,14 +929,13 @@ if st.session_state.topic == 'Greenhouse Gas':
             st.plotly_chart(pie(df_filtered, selected_category, selected_category_name, value_filter), use_container_width=True, key="pie_chart_1")
     col1, col2 = st.columns(2)
     with col1:
-        toggle_button_3 = st.toggle("📊 Multi-Line Chart / 🌊 Area-Line Chart", value=False, key="toggle_button_3")
+        # Add icon to the toggle label for better visual cue
+        toggle_button_3 = st.toggle("📊 Multi-Line Chart / 🟦 Area-Line Chart", value=False, key="toggle_button_3")
         chart_type = "area" if toggle_button_3 else "line"
         # Check for negative values in the OBS_VALUE column instead of categorical column
         min_obs_value = df_filtered['OBS_VALUE'].min()
         if min_obs_value < 0:
-            st.warning(f"Warning: The selected data contains negative values, and thus the area chart is not applicable. So the multi-line chart is used.")
-            st.plotly_chart(multi_line(df_filtered, selected_x_axis, selected_category, selected_category_name, "line"), use_container_width=True, key="multi_line_chart")
-
+            st.warning(f"Warning: The selected data contains negative values, and thus the area chart is not applicable. Please use the multi-line chart instead.")
         else:
             st.plotly_chart(multi_line(df_filtered, selected_x_axis, selected_category, selected_category_name, chart_type), use_container_width=True, key="multi_line_chart")
     with col2:
