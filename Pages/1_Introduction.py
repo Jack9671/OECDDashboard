@@ -3,7 +3,7 @@ import pandas as pd
 from pathlib import Path
 
 # Page header
-st.title("📖 Introduction to OECD Environmental Data")
+st.title("📖 Introduction")
 
 st.markdown("""
 ## About This Dashboard
@@ -21,17 +21,12 @@ Our dashboard aims to:
 
 ## 📊 Data Sources
 
-### Greenhouse Gas Emissions
-- **Without LULUCF**: Direct emissions excluding Land Use, Land-Use Change, and Forestry
-- **From LULUCF**: Emissions specifically from land use changes
-- **With LULUCF**: Total emissions including all sources
+### Greenhouse Gas Output (GHG Output)
+- **Without LULUCF**: Direct GHG Output excluding Land Use, Land-Use Change, and Forestry
+- **From LULUCF**: GHG Output specifically from land use changes
+- **With LULUCF**: Total GHG Output including all sources
 - **By Sectors**: Breakdown by economic sectors
-- **By Nature Sources**: Classification by emission source types
-
-### Agricultural Land Data
-- Land use patterns and agricultural statistics
-- Changes in agricultural area over time
-- Country-specific agricultural metrics
+- **By Nature Sources**: Classification by nature source types
 
 ### Nutrient Input/Output
 - Environmental nutrient flow analysis
@@ -48,20 +43,7 @@ Our dashboard aims to:
 ### Filtering and Customization
 - Filter by country, time period, and data categories
 - Customize visualizations based on your interests
-- Export capabilities for further analysis
 
-### Statistical Analysis
-- Summary statistics for quick insights
-- Trend analysis and percentage changes
-- Cross-country comparisons
-
-## 📈 How to Use This Dashboard
-
-1. **Navigate** using the sidebar menu to access different sections
-2. **Filter** data using the available controls to focus on specific aspects
-3. **Interact** with charts by hovering, clicking, and zooming
-4. **Analyze** trends and patterns in the visualizations
-5. **Export** data or charts for your own analysis
 
 ## 🌍 About OECD Environmental Data
 
