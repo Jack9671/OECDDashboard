@@ -934,7 +934,7 @@ if st.session_state.topic == 'Greenhouse Gas':
         # Check for negative values in the OBS_VALUE column instead of categorical column
         min_obs_value = df_filtered['OBS_VALUE'].min()
         if min_obs_value < 0:
-            st.warning(f"Warning: The selected data contains negative values, and thus the area chart is not applicable. Please use the multi-line chart instead.")
+            st.warning(f"Warning: The selected data contains negative values, and thus the area chart is not applicable. So the multi-line chart is used.")
             st.plotly_chart(multi_line(df_filtered, selected_x_axis, selected_category, selected_category_name, "line"), use_container_width=True, key="multi_line_chart")
 
         else:
