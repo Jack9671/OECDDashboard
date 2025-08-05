@@ -271,7 +271,40 @@ if st.session_state.topic == 'Greenhouse Gas':
         st.plotly_chart(static_map(df_filtered, st.session_state.projection_type), use_container_width=True, key="static_map")
     else:
         st.plotly_chart(animated_map(df_filtered, st.session_state.projection_type), use_container_width=True, key="animated_map")
-    st.write("## Analytical View")
+    
+    # Analytical View section with enhanced styling
+    st.markdown("""
+    <div style="text-align: center; margin: 40px 0 30px 0;">
+        <h2 style="
+            color: #fafafa; 
+            font-size: 36px; 
+            margin-bottom: 15px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+            background: linear-gradient(45deg, #4ecdc4, #45b7d1);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        ">
+            🧮 Analytical View
+        </h2>
+        <p style="
+            color: #a3a8b8; 
+            font-size: 18px; 
+            margin-bottom: 20px;
+            font-style: italic;
+        ">
+            Dive deep into the data with comprehensive analytical tools and visualizations
+        </p>
+        <div style="
+            width: 100px; 
+            height: 3px; 
+            background: linear-gradient(45deg, #4ecdc4, #45b7d1); 
+            margin: 0 auto;
+            border-radius: 2px;
+        "></div>
+    </div>
+    """, unsafe_allow_html=True)
+    
     st.write(df_filtered[['TIME_PERIOD', 'REF_AREA', 'MEASURE', 'OBS_VALUE']].sort_values(by=['TIME_PERIOD', 'REF_AREA', 'MEASURE']).reset_index(drop=True))
     # Styled chart configuration section
     st.markdown("### ⚙️ Chart Customization", unsafe_allow_html=True)     
