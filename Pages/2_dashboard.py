@@ -463,41 +463,39 @@ if st.session_state.topic == 'Greenhouse Gas':
 
     # Load the environmental factor data
     df_env = load_dataframe_for_interested_correlational_env_indicator(st.session_state.interested_correlational_env_factor)
-    col1, col2 = st.columns(2)
-    with col1:
-        # Main correlation visualization
-        st.markdown("### 🎯 Correlation Visualization", unsafe_allow_html=True)
-        
-        if st.session_state.accumulated_env_toggle == False:
-            st.plotly_chart(static_bubble(df_filtered, df_env, st.session_state.interested_correlational_env_factor), use_container_width=True, key="static_bubble_chart")
-        else:
-            st.plotly_chart(animated_bubble(df_filtered, df_env, st.session_state.interested_correlational_env_factor), use_container_width=True, key="animated_bubble_chart")
-    with col2:
 
-        st.markdown("#### ⚙️ View Configuration", unsafe_allow_html=True)
-        st.markdown("<br>", unsafe_allow_html=True)  # Add some spacing
-        
-        # Style the toggle with better visual representation
-        view_toggle = st.toggle(
-            "📊 Static View / 🎬 Animated View", 
-            value=False, 
-            key="accumulated_env_toggle"
-        )
-        
-        # Add explanatory text for the toggle
-        if view_toggle:
-            st.markdown("""
-            <div style="color: #a3a8b8; font-size: 12px; margin-top: 10px;">
-                🎬 <strong>Animated Mode:</strong> Shows evolution over time
-            </div>
-            """, unsafe_allow_html=True)
-        else:
-            st.markdown("""
-            <div style="color: #a3a8b8; font-size: 12px; margin-top: 10px;">
-                📊 <strong>Static Mode:</strong> Shows cumulative relationship
-            </div>
-            """, unsafe_allow_html=True)
+    # Main correlation visualization
+    st.markdown("### 🎯 Correlation Visualization", unsafe_allow_html=True)
     
+    if st.session_state.accumulated_env_toggle == False:
+        st.plotly_chart(static_bubble(df_filtered, df_env, st.session_state.interested_correlational_env_factor), use_container_width=True, key="static_bubble_chart")
+    else:
+        st.plotly_chart(animated_bubble(df_filtered, df_env, st.session_state.interested_correlational_env_factor), use_container_width=True, key="animated_bubble_chart")
+
+    st.markdown("#### ⚙️ View Configuration", unsafe_allow_html=True)
+    st.markdown("<br>", unsafe_allow_html=True)  # Add some spacing
+    
+    # Style the toggle with better visual representation
+    view_toggle = st.toggle(
+        "📊 Static View / 🎬 Animated View", 
+        value=False, 
+        key="accumulated_env_toggle"
+    )
+    
+    # Add explanatory text for the toggle
+    if view_toggle:
+        st.markdown("""
+        <div style="color: #a3a8b8; font-size: 12px; margin-top: 10px;">
+            🎬 <strong>Animated Mode:</strong> Shows evolution over time
+        </div>
+        """, unsafe_allow_html=True)
+    else:
+        st.markdown("""
+        <div style="color: #a3a8b8; font-size: 12px; margin-top: 10px;">
+            📊 <strong>Static Mode:</strong> Shows cumulative relationship
+        </div>
+        """, unsafe_allow_html=True)
+
     # Environmental factor breakdown section
     st.markdown("### 📋 Environmental Factor Breakdown Per Country (REF_AREA)", unsafe_allow_html=True)
     # Filter based on selected countries and time period only
