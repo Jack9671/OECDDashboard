@@ -182,9 +182,9 @@ st.markdown("""
     }
 </style>
 """, unsafe_allow_html=True)
-st.sidebar.markdown("### 📊 Select Topic", unsafe_allow_html=True)
+st.markdown("### 📊 Select Topic", unsafe_allow_html=True)
 available_topics = ['Greenhouse Gas', 'Nutrient Input and Output']
-st.session_state.topic = st.sidebar.selectbox("", available_topics, key="topic_select") 
+st.session_state.topic = st.selectbox("", available_topics, key="topic_select") 
 if st.session_state.topic == 'Greenhouse Gas':
     col1, col2 = st.columns(2)
     with col1:
