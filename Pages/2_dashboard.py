@@ -22,22 +22,20 @@ st.set_page_config(
 # ============================================================================
 # DATA LOADING ( D:\Semester 4\Data Visualization\OECDDashBoard> C:/Users/xuant/AppData/Local/Microsoft/WindowsApps/python3.11.exe -m streamlit run "Pages\2_dashboard.py")
 # ============================================================================
-BASE_DIR = Path(__file__).parent.parent / 'DataSource' / 'GreenHouseGas'
+BASE_DIR = Path(__file__).parent.parent / 'DataSource'
 @st.cache_data
 def load_dataframe_for_subtopic(topic: str = 'Greenhouse Gas Output') -> dict[str, pd.DataFrame]:
     """Load all greenhouse gas datasets with error handling"""
     datasets: dict[str, pd.DataFrame] = {}
     topic_map = {
         'Greenhouse Gas Output': {
-            'Without LULUCF':       BASE_DIR / 'GreenHouseGasWithoutLULUCF.csv',
-            'From LULUCF':          BASE_DIR / 'GreenHouseGasFromLULUCF.csv',
-            'With LULUCF':          BASE_DIR / 'GreenHouseGasWithLULUCF.csv',
-            'Sector':           BASE_DIR / 'GreenHouseGasBySectors.csv',
-            'Nature Source':    BASE_DIR / 'GreenHouseGasByNatureSources.csv',
+            'Without LULUCF':       BASE_DIR / 'GreenHouseGas' / 'GreenHouseGasWithoutLULUCF.csv',
+            'From LULUCF':          BASE_DIR / 'GreenHouseGas' / 'GreenHouseGasFromLULUCF.csv',
+            'With LULUCF':          BASE_DIR / 'GreenHouseGas' / 'GreenHouseGasWithLULUCF.csv',
+            'Sector':           BASE_DIR / 'GreenHouseGas' / 'GreenHouseGasBySectors.csv',
+            'Nature Source':    BASE_DIR / 'GreenHouseGas' / 'GreenHouseGasByNatureSources.csv',
         },
         'Nutrient Input and Output': {},
-        'Land': {},
-        'Livestock': {}
     }
 
     if topic == 'Greenhouse Gas':
@@ -51,6 +49,28 @@ def load_dataframe_for_subtopic(topic: str = 'Greenhouse Gas Output') -> dict[st
     else:
         st.error(f"Data for '{topic}' is not yet implemented.")
     return datasets
+
+@st.cache_data
+def load_dataframe_for_interested_correlational_env_indicator(indicator: str) -> pd.DataFrame:
+    """Load environmental indicator datasets for correlation analysis"""
+    topic_map = {
+        'Agricultural Energy Consumption': BASE_DIR / 'Energy' / 'AgriculturalEnergyConsumption.csv',
+        'Agricultural Land Area': BASE_DIR / 'Land' / 'AgriculturalLand.csv',
+        'Agricultural Water Use': BASE_DIR / 'WaterAbstraction' / 'AgriculturalWaterAbstraction.csv',
+    }
+    
+    file_path = topic_map.get(indicator)
+    if file_path and file_path.exists():
+        try:
+            df = pd.read_csv(file_path)
+            return df
+        except Exception as e:
+            st.error(f"Error loading {indicator}: {e}")
+            return pd.DataFrame()
+    else:
+        st.error(f"Data for '{indicator}' is not available or file not found.")
+        return pd.DataFrame()
+
 
 # ============================================================================
 # Components
@@ -705,7 +725,7 @@ def tree_map(df: pd.DataFrame, groupby_var: str, category_name: str, value_filte
         df_grouped = df_grouped[df_grouped['OBS_VALUE'] < 0]
         # Convert negative values to positive for display purposes
         df_grouped['OBS_VALUE'] = df_grouped['OBS_VALUE'].abs()
-        title_suffix = " (Negative Values - Absolute)"
+        title_suffix = "(Negative Values - Absolute)"
     else:
         title_suffix = ""
     
@@ -765,8 +785,74 @@ def tree_map(df: pd.DataFrame, groupby_var: str, category_name: str, value_filte
         title_x=0.5,
         font=dict(size=25)
     )
-    
     return fig
+
+def static_bubble(df_ghs: pd.DataFrame, df_x: pd.DataFrame, x_axis_label: str) -> go.Figure:
+    df_pop = pd.read_csv(BASE_DIR / 'Population' / 'AnnualPopulationOECDCountry.csv')
+    df_pop.rename(columns={"OBS_VALUE": "POPULATION"}, inplace=True)
+    df_ghs = df_ghs.groupby(['REF_AREA'])['OBS_VALUE'].sum().reset_index()
+    df_x  = pd.merge(df_x, df_pop, on=["REF_AREA"], how='inner')
+    df_x = df_x.groupby(['REF_AREA', 'POPULATION'])['OBS_VALUE'].sum().reset_index()
+    df_for_static_scatter_plot = pd.merge(df_x, df_ghs, on=["REF_AREA"], how='inner')
+    fig = px.scatter(
+        df_for_static_scatter_plot, 
+        x='OBS_VALUE_x', 
+        y='OBS_VALUE_y',
+        size='POPULATION', 
+        color='REF_AREA',
+        hover_name='REF_AREA',
+        text='REF_AREA',  # Add text labels with each scatter point
+        labels={
+            'OBS_VALUE_x': x_axis_label,
+            'OBS_VALUE_y': 'GHS output (in tonnes)'
+        },
+        title=f"The relationship between {x_axis_label}, Population, and GHS Output",
+        width=1000, 
+        height=800,
+        size_max=50,  # Remove upper limit by setting very high value
+        template='plotly_dark',
+    )
+    # Set a minimum marker size for visibility
+    fig.update_traces(marker=dict(sizemin=1))
+    fig.add_annotation(
+    text="output of 3 variables of each country is accumulated over time except for the population being the median",
+    xref="paper", yref="paper",
+    x=0.5, y=0,  # Position below the plot
+    showarrow=False,
+    font=dict(size=12, color="red")
+)
+    return fig
+
+
+def animated_bubble(df_ghs: pd.DataFrame, df_x: pd.DataFrame, x_axis_label: str) -> go.Figure:
+    df_pop = pd.read_csv(BASE_DIR / 'Population' / 'AnnualPopulationOECDCountry.csv')
+    df_pop.rename(columns={"OBS_VALUE": "POPULATION"}, inplace=True)
+    df_ghs = df_ghs.groupby(['REF_AREA', 'TIME_PERIOD'])['OBS_VALUE'].sum().reset_index()
+    df_x  = pd.merge(df_x, df_pop, on=["REF_AREA", "TIME_PERIOD"], how='inner')
+    df_x = df_x.groupby(['REF_AREA', 'TIME_PERIOD', 'POPULATION'])['OBS_VALUE'].sum().reset_index()
+    df_for_animated_scatter_plot = pd.merge(df_x, df_ghs, on=["REF_AREA", "TIME_PERIOD"], how='inner')
+    fig = px.scatter(
+        df_for_animated_scatter_plot, 
+        x='OBS_VALUE_x', 
+        y='OBS_VALUE_y',
+        animation_frame='TIME_PERIOD',
+        size='POPULATION', 
+        color='REF_AREA',
+        hover_name='REF_AREA',
+        text='REF_AREA',  # Add text labels with each scatter point
+        labels={
+            'OBS_VALUE_x': x_axis_label,
+            'OBS_VALUE_y': 'Total Greenhouse Gas Output (in tonnes)'},
+        title=f"Evolution of the relationship between {x_axis_label}, Population, and GHS Output per year",
+        width=1000, 
+        height=800,
+        size_max=50,  # Remove upper limit by setting very high value
+        template='plotly_dark',
+    )
+    # Set a minimum marker size for visibility
+    fig.update_traces(marker=dict(sizemin=1))
+    return fig
+
 # ============================================================================
 # initialize session state
 # ============================================================================
@@ -778,9 +864,8 @@ if 'user_config' not in st.session_state:
     st.session_state.user_config = None
 if 'projection_type' not in st.session_state:
     st.session_state.projection_type = 'orthographic'  # Default projection type
-
-
-
+if 'interested_correlational_env_factor' not in st.session_state:
+    st.session_state.interested_correlational_env_factor = 'Agricultural Land Area'
 # ============================================================================
 # MAIN DISPLAY
 # ============================================================================
@@ -933,10 +1018,23 @@ if st.session_state.topic == 'Greenhouse Gas':
         min_obs_value = df_filtered['OBS_VALUE'].min()
         if min_obs_value < 0:
             st.warning(f"Warning: The selected data contains negative values, and thus the area chart is not applicable. Please use the multi-line chart instead.")
+            st.plotly_chart(multi_line(df_filtered, selected_x_axis, selected_category, selected_category_name, "line"), use_container_width=True, key="multi_line_chart")  
         else:
             st.plotly_chart(multi_line(df_filtered, selected_x_axis, selected_category, selected_category_name, chart_type), use_container_width=True, key="multi_line_chart")
     with col2:
         st.plotly_chart(animated_hor_bar(df_filtered, selected_category), use_container_width=True, key="animated_horizontal_bar_chart")
+    
+    st.write("## Relationship between GHS Output and Other Environmental Factors")
+    st.session_state.interested_correlational_env_factor = st.selectbox("Select Which Environmental Factor to explore", ['Agricultural Energy Consumption', 'Agricultural Land Area', 'Agricultural Water Use'])
+    # Load the environmental factor data
+    df_env = load_dataframe_for_interested_correlational_env_indicator(st.session_state.interested_correlational_env_factor)
+        # Create correlation visualizations
+    col1, col2 = st.columns(2)
+    with col1:
+        st.plotly_chart(static_bubble(df_filtered, df_env, st.session_state.interested_correlational_env_factor), use_container_width=True, key="static_bubble_chart")
+    with col2:
+        st.plotly_chart(animated_bubble(df_filtered, df_env, st.session_state.interested_correlational_env_factor), use_container_width=True, key="animated_bubble_chart")
+    
 
 elif st.session_state.topic == 'Nutrient Input and Output':
     st.write("This topic is not yet implemented.")

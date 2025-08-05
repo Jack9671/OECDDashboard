@@ -19,7 +19,7 @@ def summary_statistics(df: pd.DataFrame, user_config: dict[str, str]) -> pd.Data
     df_end.rename(columns={'OBS_VALUE': 'END_VALUE'}, inplace=True)
     summary_df = pd.merge(df_start, df_end, on='REF_AREA', how='outer')
     summary_df['PERCENTAGE_CHANGE'] = ((summary_df['END_VALUE'] - summary_df['START_VALUE']) / summary_df['START_VALUE'].replace(0, np.nan)) * 100
-    summary_df['DESCRIPTION'] = 'Greenhouse Gas Emissions'
+    summary_df['DESCRIPTION'] = 'Greenhouse Gas Ouput'
     summary_df = summary_df[['DESCRIPTION', 'START_VALUE', 'END_VALUE', 'PERCENTAGE_CHANGE']]
     return summary_df
 
