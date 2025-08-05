@@ -649,7 +649,6 @@ def pie(df: pd.DataFrame, groupby_var: str, category_name: str, value_filter: st
     columns_to_count = ['OBS_VALUE']
     # Group the DataFrame by the specified variable and sum the OBS_VALUE
     df_grouped = df.groupby(groupby_var)[columns_to_count].sum().reset_index()
-    
     # Apply value filtering for positive/negative values
     if value_filter == "Show all contributors to GHS Emissions":
         df_grouped = df_grouped[df_grouped['OBS_VALUE'] >= 0]
@@ -657,11 +656,10 @@ def pie(df: pd.DataFrame, groupby_var: str, category_name: str, value_filter: st
     elif value_filter == "Show all contributors to GHS Absorption":
         df_grouped = df_grouped[df_grouped['OBS_VALUE'] < 0]
         # Convert negative values to positive for display purposes
-        df_grouped['OBS_VALUE'] = df_grouped['OBS_VALUE'].abs()
+        #df_grouped['OBS_VALUE'] = df_grouped['OBS_VALUE'].abs()
         title_suffix = " (Negative Values - Absolute)"
     else:
         title_suffix = ""
-    
     # Check if we have data after filtering
     if df_grouped.empty or df_grouped['OBS_VALUE'].sum() == 0:
         # Create empty figure with message
@@ -674,7 +672,7 @@ def pie(df: pd.DataFrame, groupby_var: str, category_name: str, value_filter: st
         )
         fig.update_layout(
             template='plotly_dark',
-            title=f"Proportion of {category_name} by {groupby_var.replace('_', ' ').title()}{title_suffix}",
+            title=f"Proportion of {category_name}",
             width=700, height=600
         )
         return fig
@@ -684,7 +682,7 @@ def pie(df: pd.DataFrame, groupby_var: str, category_name: str, value_filter: st
     # Get consistent color mapping based on the groupby variable
     color_map = get_color_mapping(df_grouped, groupby_var)
     fig = px.pie(df_grouped, values='OBS_VALUE', names=groupby_var,
-                 title=f"Proportion of {category_name} by {groupby_var.replace('_', ' ').title()}{title_suffix}",
+                 title=f"Proportion of {category_name}",
                  color=groupby_var,
                  color_discrete_map=color_map,
                  labels={groupby_var: category_name, 'OBS_VALUE': 'Percentage (%)'},
@@ -723,7 +721,7 @@ def tree_map(df: pd.DataFrame, groupby_var: str, category_name: str, value_filte
         )
         fig.update_layout(
             template='plotly_dark',
-            title=f"Tree Map of {category_name} by {groupby_var.replace('_', ' ').title()}{title_suffix}",
+            title=f"Tree Map of {category_name}",
             width=700, height=600, font=dict(size=25)
         )
         return fig
@@ -742,7 +740,7 @@ def tree_map(df: pd.DataFrame, groupby_var: str, category_name: str, value_filte
     fig = px.treemap(df_grouped, 
                      path=[groupby_var], 
                      values='OBS_VALUE',
-                     title=f"Tree Map of {category_name} by {groupby_var.replace('_', ' ').title()}{title_suffix}",
+                     title=f"Tree Map of {category_name}",
                      color=groupby_var,
                      color_discrete_map=color_map,
                      labels={groupby_var: category_name, 'OBS_VALUE': 'Value'},
@@ -762,7 +760,6 @@ def tree_map(df: pd.DataFrame, groupby_var: str, category_name: str, value_filte
     )
     # Set customdata to use the custom_text column for texttemplate
     fig.data[0].customdata = np.array(df_grouped[['custom_text']])
-    
     # Update layout
     fig.update_layout(
         title_x=0.5,
