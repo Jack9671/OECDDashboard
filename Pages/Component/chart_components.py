@@ -259,6 +259,21 @@ def animated_hor_bar(df: pd.DataFrame, col_to_rank: str) -> go.Figure:
     # Use the same consistent color mapping as the line chart
     color_map = get_color_mapping(df, col_to_rank)
 
+    # Calculate the range for x-axis to accommodate both positive and negative values
+    min_value = df_grouped['OBS_VALUE'].min()
+    max_value = df_grouped['OBS_VALUE'].max()
+    
+    # Add padding to the range (10% on each side)
+    padding = abs(max_value - min_value) * 0.1
+    x_range = [min_value - padding, max_value + padding]
+    
+    # If all values are positive, start from 0
+    if min_value >= 0:
+        x_range[0] = 0
+    # If all values are negative, end at 0
+    elif max_value <= 0:
+        x_range[1] = 0
+
     # Create animated horizontal bar chart
     fig = px.bar(df_sorted,
                 x='OBS_VALUE', y=col_to_rank,
@@ -268,15 +283,15 @@ def animated_hor_bar(df: pd.DataFrame, col_to_rank: str) -> go.Figure:
                 color=col_to_rank,
                 animation_frame='TIME_PERIOD',
                 animation_group=col_to_rank,
-                template='plotly_dark', barmode= 'relative',
+                template='plotly_dark',
                 width=800, height=700,
-                # Add range for consistent x-axis across all frames
-                range_x=[0, df_grouped['OBS_VALUE'].max() * 1.1])
+                # Use calculated range for consistent x-axis across all frames
+                range_x=x_range)
 
-    # Add text labels and border styling
+    # Add text labels and border styling with conditional positioning
     fig.update_traces(
         texttemplate='%{x:.2s}', 
-        textposition='outside',
+        textposition='auto',  # Changed to 'auto' to handle negative values better
         marker=dict(line=dict(width=1, color='DarkSlateGrey')),
         # Add hover template for better interactivity
         hovertemplate='<b>%{y}</b><br>' +
@@ -319,7 +334,10 @@ def animated_hor_bar(df: pd.DataFrame, col_to_rank: str) -> go.Figure:
             title=col_to_rank.replace('_', ' ').title(),
         ),
         xaxis=dict(
-            title='Gas Output (Tonnes of CO2-equivalent)'
+            title='Gas Output (Tonnes of CO2-equivalent)',
+            zeroline=True,  # Show zero line
+            zerolinewidth=2,
+            zerolinecolor='white'
         ),
         # Add slider for manual frame control
         sliders=[{
@@ -344,11 +362,47 @@ def animated_hor_bar(df: pd.DataFrame, col_to_rank: str) -> go.Figure:
         }], title_font=dict(size=20), title_x=0.2, title_y=0.88 
     )
 
-    # Add custom data for hover information
+    # Update traces to handle negative values with different colors
+    for i, trace in enumerate(fig.data):
+        # Add custom styling for negative vs positive values
+        x_values = trace.x if hasattr(trace, 'x') else []
+        colors = []
+        text_positions = []
+        
+        for x_val in x_values:
+            if x_val < 0:
+                colors.append('red')  # Red for negative values (absorption)
+                text_positions.append('outside')  # Position text outside for negative bars
+            else:
+                colors.append(color_map.get(trace.name, 'green'))  # Original color for positive
+                text_positions.append('auto')  # Auto position for positive bars
+        
+        # Update trace with conditional coloring (this will be applied to all frames)
+        if colors:
+            trace.marker.color = colors[0] if len(set(colors)) == 1 else colors
+
+    # Add custom data for hover information and update frames
     for frame in fig.frames:
         for trace in frame.data:
             # Add year information to hover
             trace.customdata = [frame.name] * len(trace.x)
+            
+            # Apply conditional coloring to each frame
+            x_values = trace.x if hasattr(trace, 'x') else []
+            colors = []
+            
+            for x_val in x_values:
+                if x_val < 0:
+                    colors.append('red')  # Red for negative values
+                else:
+                    colors.append(color_map.get(trace.name, 'green'))  # Original color
+            
+            if colors and len(colors) == len(x_values):
+                trace.marker.color = colors[0] if len(set(colors)) == 1 else colors
+                
+            # Update text position for better visibility with negative values
+            trace.textposition = 'auto'
+            
     return fig
 
 def pie(df: pd.DataFrame, groupby_var: str, category_name: str, value_filter: str = "All Values") -> go.Figure:
