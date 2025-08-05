@@ -408,9 +408,6 @@ if st.session_state.topic == 'Greenhouse Gas':
     </div>
     """, unsafe_allow_html=True)
     
-    # Create columns for better layout
-    col_env1, col_env2 = st.columns([2, 1])
-    
     st.markdown("#### 🌱 Select Environmental Factor", unsafe_allow_html=True)
     env_factor_options = [
         'Agricultural Energy Consumption (Tonnes of oil equivalent)', 
@@ -465,13 +462,7 @@ if st.session_state.topic == 'Greenhouse Gas':
     df_env = load_dataframe_for_interested_correlational_env_indicator(st.session_state.interested_correlational_env_factor)
 
     # Main correlation visualization
-    st.markdown("### 🎯 Correlation Visualization", unsafe_allow_html=True)
-    
-    if st.session_state.accumulated_env_toggle == False:
-        st.plotly_chart(static_bubble(df_filtered, df_env, st.session_state.interested_correlational_env_factor), use_container_width=True, key="static_bubble_chart")
-    else:
-        st.plotly_chart(animated_bubble(df_filtered, df_env, st.session_state.interested_correlational_env_factor), use_container_width=True, key="animated_bubble_chart")
-
+    st.markdown("### 🎯 Correlation", unsafe_allow_html=True)
     st.markdown("#### ⚙️ View Configuration", unsafe_allow_html=True)
     st.markdown("<br>", unsafe_allow_html=True)  # Add some spacing
     
@@ -496,6 +487,12 @@ if st.session_state.topic == 'Greenhouse Gas':
         </div>
         """, unsafe_allow_html=True)
 
+    if st.session_state.accumulated_env_toggle == False:
+        st.plotly_chart(static_bubble(df_filtered, df_env, st.session_state.interested_correlational_env_factor), use_container_width=True, key="static_bubble_chart")
+    else:
+        st.plotly_chart(animated_bubble(df_filtered, df_env, st.session_state.interested_correlational_env_factor), use_container_width=True, key="animated_bubble_chart")
+
+    
     # Environmental factor breakdown section
     st.markdown("### 📋 Environmental Factor Breakdown Per Country (REF_AREA)", unsafe_allow_html=True)
     # Filter based on selected countries and time period only
