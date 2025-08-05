@@ -54,9 +54,9 @@ def load_dataframe_for_subtopic(topic: str = 'Greenhouse Gas Output') -> dict[st
 def load_dataframe_for_interested_correlational_env_indicator(indicator: str) -> pd.DataFrame:
     """Load environmental indicator datasets for correlation analysis"""
     topic_map = {
-        'Agricultural Energy Consumption': BASE_DIR / 'Energy' / 'AgriculturalEnergyConsumption.csv',
-        'Agricultural Land Area': BASE_DIR / 'Land' / 'AgriculturalLand.csv',
-        'Agricultural Water Use': BASE_DIR / 'WaterAbstraction' / 'AgriculturalWaterAbstraction.csv',
+        'Agricultural Energy Consumption (Tonnes of oil equivalent)': BASE_DIR / 'Energy' / 'AgriculturalEnergyConsumption.csv',
+        'Agricultural Land Area (Hectares)': BASE_DIR / 'Land' / 'AgriculturalLand.csv',
+        'Agricultural Water Use (Cubic meters)': BASE_DIR / 'WaterAbstraction' / 'AgriculturalWaterAbstraction.csv',
     }
     
     file_path = topic_map.get(indicator)
@@ -70,7 +70,6 @@ def load_dataframe_for_interested_correlational_env_indicator(indicator: str) ->
     else:
         st.error(f"Data for '{indicator}' is not available or file not found.")
         return pd.DataFrame()
-
 
 # ============================================================================
 # Components
@@ -1018,14 +1017,14 @@ if st.session_state.topic == 'Greenhouse Gas':
         min_obs_value = df_filtered['OBS_VALUE'].min()
         if min_obs_value < 0:
             st.warning(f"Warning: The selected data contains negative values, and thus the area chart is not applicable. Please use the multi-line chart instead.")
-            st.plotly_chart(multi_line(df_filtered, selected_x_axis, selected_category, selected_category_name, "line"), use_container_width=True, key="multi_line_chart")  
+            st.plotly_chart(multi_line(df_filtered, selected_x_axis, selected_category, selected_category_name, "line"), use_container_width=True, key="multi_line_chart")
         else:
             st.plotly_chart(multi_line(df_filtered, selected_x_axis, selected_category, selected_category_name, chart_type), use_container_width=True, key="multi_line_chart")
     with col2:
         st.plotly_chart(animated_hor_bar(df_filtered, selected_category), use_container_width=True, key="animated_horizontal_bar_chart")
     
     st.write("## Relationship between GHS Output and Other Environmental Factors")
-    st.session_state.interested_correlational_env_factor = st.selectbox("Select Which Environmental Factor to explore", ['Agricultural Energy Consumption', 'Agricultural Land Area', 'Agricultural Water Use'])
+    st.session_state.interested_correlational_env_factor = st.selectbox("Select Which Environmental Factor to explore", ['Agricultural Energy Consumption (Tonnes of oil equivalent)', 'Agricultural Land Area (Hectares)', 'Agricultural Water Use (Cubic meters)'])
     # Load the environmental factor data
     df_env = load_dataframe_for_interested_correlational_env_indicator(st.session_state.interested_correlational_env_factor)
         # Create correlation visualizations
