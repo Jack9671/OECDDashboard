@@ -1,3 +1,16 @@
 .DS_Store
-./OECDDashBoard/exploration_AgriLand.ipynb
-./OECDDashBoard/exploration_GHS.ipynb
+
+# Exploration notebooks (development only)
+exploration_AgriLand.ipynb
+exploration_GHS.ipynb
+
+# Jupyter Notebook checkpoints
+.ipynb_checkpoints/
+
+# Python cache
+__pycache__/
+*.pyc
+*.pyo
+
+# VS Code
+.vscode/
