@@ -463,7 +463,6 @@ if st.session_state.topic == 'Greenhouse Gas':
 
     # Main correlation visualization
     st.markdown("### 🎯 Correlation", unsafe_allow_html=True)
-    st.markdown("#### ⚙️ View Configuration", unsafe_allow_html=True)
     st.markdown("<br>", unsafe_allow_html=True)  # Add some spacing
     
     # Style the toggle with better visual representation
