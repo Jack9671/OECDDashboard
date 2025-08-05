@@ -268,7 +268,7 @@ def animated_hor_bar(df: pd.DataFrame, col_to_rank: str) -> go.Figure:
                 color=col_to_rank,
                 animation_frame='TIME_PERIOD',
                 animation_group=col_to_rank,
-                template='plotly_dark', barmode= 'relative'
+                template='plotly_dark', barmode= 'relative',
                 width=800, height=700,
                 # Add range for consistent x-axis across all frames
                 range_x=[0, df_grouped['OBS_VALUE'].max() * 1.1])
