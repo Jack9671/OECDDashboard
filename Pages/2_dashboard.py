@@ -408,90 +408,82 @@ if st.session_state.topic == 'Greenhouse Gas':
     </div>
     """, unsafe_allow_html=True)
     
-    # Create columns for better layout
-    col_env1, col_env2 = st.columns([2, 1])
+    st.markdown("#### 🌱 Select Environmental Factor", unsafe_allow_html=True)
+    env_factor_options = [
+        'Agricultural Energy Consumption (Tonnes of oil equivalent)', 
+        'Agricultural Land Area (Hectares)', 
+        'Agricultural Water Use (Cubic meters)'
+    ]
     
-    with col_env1:
-        st.markdown("#### 🌱 Select Environmental Factor", unsafe_allow_html=True)
-        env_factor_options = [
-            'Agricultural Energy Consumption (Tonnes of oil equivalent)', 
-            'Agricultural Land Area (Hectares)', 
-            'Agricultural Water Use (Cubic meters)'
-        ]
-        
-        # Add descriptions for each environmental factor
-        factor_descriptions = {
-            'Agricultural Energy Consumption (Tonnes of oil equivalent)': {
-                'icon': '⚡',
-                'description': 'Energy used in agricultural production and processing',
-                'color': '#f39c12'
-            },
-            'Agricultural Land Area (Hectares)': {
-                'icon': '🌾',
-                'description': 'Total area dedicated to agricultural activities',
-                'color': '#27ae60'
-            },
-            'Agricultural Water Use (Cubic meters)': {
-                'icon': '💧',
-                'description': 'Water consumption for irrigation and livestock',
-                'color': '#3498db'
-            }
+    # Add descriptions for each environmental factor
+    factor_descriptions = {
+        'Agricultural Energy Consumption (Tonnes of oil equivalent)': {
+            'icon': '⚡',
+            'description': 'Energy used in agricultural production and processing',
+            'color': '#f39c12'
+        },
+        'Agricultural Land Area (Hectares)': {
+            'icon': '🌾',
+            'description': 'Total area dedicated to agricultural activities',
+            'color': '#27ae60'
+        },
+        'Agricultural Water Use (Cubic meters)': {
+            'icon': '💧',
+            'description': 'Water consumption for irrigation and livestock',
+            'color': '#3498db'
         }
-        
-        selected_env_factor = st.selectbox(
-            "",
-            env_factor_options,
-            key="interested_correlational_env_factor"
-        )
-        
-        # Display factor description
-        factor_info = factor_descriptions[selected_env_factor]
-        st.markdown(f"""
-        <div style="
-            background-color: #0e1117;
-            padding: 15px;
-            border-radius: 8px;
-            border-left: 4px solid {factor_info['color']};
-            margin: 15px 0;
-            border: 1px solid #262730;
-        ">
-            <div style="display: flex; align-items: center;">
-                <span style="font-size: 20px; margin-right: 10px;">{factor_info['icon']}</span>
-                <span style="color: #a3a8b8; font-size: 14px;">{factor_info['description']}</span>
-            </div>
-        </div>
-        """, unsafe_allow_html=True)
+    }
     
-    with col_env2:
-        st.markdown("#### ⚙️ View Configuration", unsafe_allow_html=True)
-        st.markdown("<br>", unsafe_allow_html=True)  # Add some spacing
-        
-        # Style the toggle with better visual representation
-        view_toggle = st.toggle(
-            "📊 Static View / 🎬 Animated View", 
-            value=False, 
-            key="accumulated_env_toggle"
-        )
-        
-        # Add explanatory text for the toggle
-        if view_toggle:
-            st.markdown("""
-            <div style="color: #a3a8b8; font-size: 12px; margin-top: 10px;">
-                🎬 <strong>Animated Mode:</strong> Shows evolution over time
-            </div>
-            """, unsafe_allow_html=True)
-        else:
-            st.markdown("""
-            <div style="color: #a3a8b8; font-size: 12px; margin-top: 10px;">
-                📊 <strong>Static Mode:</strong> Shows cumulative relationship
-            </div>
-            """, unsafe_allow_html=True)
-
+    selected_env_factor = st.selectbox(
+        "",
+        env_factor_options,
+        key="interested_correlational_env_factor"
+    )
+    
+    # Display factor description
+    factor_info = factor_descriptions[selected_env_factor]
+    st.markdown(f"""
+    <div style="
+        background-color: #0e1117;
+        padding: 15px;
+        border-radius: 8px;
+        border-left: 4px solid {factor_info['color']};
+        margin: 15px 0;
+        border: 1px solid #262730;
+    ">
+        <div style="display: flex; align-items: center;">
+            <span style="font-size: 20px; margin-right: 10px;">{factor_info['icon']}</span>
+            <span style="color: #a3a8b8; font-size: 14px;">{factor_info['description']}</span>
+        </div>
+    </div>
+    """, unsafe_allow_html=True)
+    
     # Load the environmental factor data
     df_env = load_dataframe_for_interested_correlational_env_indicator(st.session_state.interested_correlational_env_factor)
 
     # Main correlation visualization
-    st.markdown("### 🎯 Correlation Visualization", unsafe_allow_html=True)
+    st.markdown("<br>", unsafe_allow_html=True)  # Add some spacing
+    
+    # Style the toggle with better visual representation
+    view_toggle = st.toggle(
+        "📊 Static View / 🎬 Animated View", 
+        value=False, 
+        key="accumulated_env_toggle"
+    )
+    
+    # Add explanatory text for the toggle
+    if view_toggle:
+        st.markdown("""
+        <div style="color: #a3a8b8; font-size: 12px; margin-top: 10px;">
+            🎬 <strong>Animated Mode:</strong> Shows evolution over time
+        </div>
+        """, unsafe_allow_html=True)
+    else:
+        st.markdown("""
+        <div style="color: #a3a8b8; font-size: 12px; margin-top: 10px;">
+            📊 <strong>Static Mode:</strong> Shows cumulative relationship
+        </div>
+        """, unsafe_allow_html=True)
 
     if st.session_state.accumulated_env_toggle == False:
         st.plotly_chart(static_bubble(df_filtered, df_env, st.session_state.interested_correlational_env_factor), use_container_width=True, key="static_bubble_chart")
