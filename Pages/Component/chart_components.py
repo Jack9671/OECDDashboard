@@ -673,6 +673,8 @@ def bar_line(df: pd.DataFrame, x_axis_variable: str, category_to_stack: str, cat
         yaxis='y',
         hovertemplate=f'<b>{x_axis_variable}:</b> %{{x}}<br><b>Total:</b> %{{y:,.0f}} Tonnes of CO2-equivalent<extra></extra>'
     ))
+    st.write(df_pivoted[x_axis_variable])
+    st.write(df_pivoted['total'])
     return fig_stacked
 
 def percentage_bar_line(df: pd.DataFrame, x_axis_variable: str, category_to_stack: str, category_name: str) -> go.Figure:
