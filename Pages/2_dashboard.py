@@ -195,13 +195,13 @@ if st.session_state.topic == 'Greenhouse Gas':
             'Without LULUCF': {
                 'icon': '🏭',
                 'title': 'Greenhouse Gas Output (Excluding LULUCF)',
-                'description': 'This analysis focuses on Greenhouse Gas Output excluding Land Use, Land-Use Change, and Forestry (LULUCF). It covers emissions from industrial, energy, agriculture, and waste sectors.',
+                'description': 'This analysis focuses on Greenhouse Gas Output excluding Land Use, Land-Use Change, and Forestry (LULUCF). It covers GHS output from industrial, energy, agriculture, and waste sectors.',
                 'color': '#ff6b6b'
             },
             'From LULUCF': {
                 'icon': '🌳',
                 'title': 'Greenhouse Gas Output (From LULUCF)',
-                'description': 'This analysis focuses on Greenhouse Gas Output specifically from Land Use, Land-Use Change, and Forestry (LULUCF). It includes emissions and carbon sequestration from forests and land conversion.',
+                'description': 'This analysis focuses on Greenhouse Gas Output specifically from Land Use, Land-Use Change, and Forestry (LULUCF). It includes GHS output and carbon sequestration from forests and land conversion.',
                 'color': '#4ecdc4'
             },
             'With LULUCF': {
@@ -213,13 +213,13 @@ if st.session_state.topic == 'Greenhouse Gas':
             'Sector': {
                 'icon': '🏗️',
                 'title': 'Greenhouse Gas Output by Sectors',
-                'description': 'This analysis breaks down Greenhouse Gas Output by economic sectors such as energy, industry, agriculture, transport, and waste. It helps identify which sectors contribute most to emissions.',
+                'description': 'This analysis breaks down Greenhouse Gas Output by economic sectors such as energy, industry, agriculture, transport, and waste. It helps identify which sectors contribute most to GHS output.',
                 'color': '#f39c12'
             },
             'Nature Source': {
                 'icon': '⚗️',
                 'title': 'Greenhouse Gas Output by Nature Sources',
-                'description': 'This analysis categorizes Greenhouse Gas Output by the natural sources such as cropland, grassland, wetlands, and other ecosystems. It helps understand the role of nature in greenhouse gas absorption and emissions.',
+                'description': 'This analysis categorizes Greenhouse Gas Output by the natural sources such as cropland, grassland, wetlands, and other ecosystems. It helps understand the role of nature in greenhouse gas absorption and GHS output.',
                 'color': '#9b59b6'
             }
         }
