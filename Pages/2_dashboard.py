@@ -410,30 +410,48 @@ if st.session_state.topic == 'Greenhouse Gas':
     col1, col2 = st.columns(2)
     with col1:
         st.markdown("#### 🌱 Select Environmental Factor", unsafe_allow_html=True)
-    env_factor_options = [
-        'Agricultural Energy Consumption (Tonnes of oil equivalent)', 
-        'Agricultural Land Area (Hectares)', 
-        'Agricultural Water Use (Cubic meters)'
-    ]
-    
-    # Add descriptions for each environmental factor
-    factor_descriptions = {
-        'Agricultural Energy Consumption (Tonnes of oil equivalent)': {
-            'icon': '⚡',
-            'description': 'Energy used in agricultural production and processing',
-            'color': '#f39c12'
-        },
-        'Agricultural Land Area (Hectares)': {
-            'icon': '🌾',
-            'description': 'Total area dedicated to agricultural activities',
-            'color': '#27ae60'
-        },
-        'Agricultural Water Use (Cubic meters)': {
-            'icon': '💧',
-            'description': 'Water consumption for irrigation and livestock',
-            'color': '#3498db'
+        env_factor_options = [
+            'Agricultural Energy Consumption (Tonnes of oil equivalent)', 
+            'Agricultural Land Area (Hectares)', 
+            'Agricultural Water Use (Cubic meters)'
+        ]
+        
+        # Add descriptions for each environmental factor
+        factor_descriptions = {
+            'Agricultural Energy Consumption (Tonnes of oil equivalent)': {
+                'icon': '⚡',
+                'description': 'Energy used in agricultural production and processing',
+                'color': '#f39c12'
+            },
+            'Agricultural Land Area (Hectares)': {
+                'icon': '🌾',
+                'description': 'Total area dedicated to agricultural activities',
+                'color': '#27ae60'
+            },
+            'Agricultural Water Use (Cubic meters)': {
+                'icon': '💧',
+                'description': 'Water consumption for irrigation and livestock',
+                'color': '#3498db'
+            }
         }
-    }
+        # Display factor description
+        factor_info = factor_descriptions[selected_env_factor]
+        st.markdown(f"""
+        <div style="
+            background-color: #0e1117;
+            padding: 15px;
+            border-radius: 8px;
+            border-left: 4px solid {factor_info['color']};
+            margin: 15px 0;
+            border: 1px solid #262730;
+        ">
+            <div style="display: flex; align-items: center;">
+                <span style="font-size: 20px; margin-right: 10px;">{factor_info['icon']}</span>
+                <span style="color: #a3a8b8; font-size: 14px;">{factor_info['description']}</span>
+            </div>
+        </div>
+        """, unsafe_allow_html=True)
+
     with col2:
         selected_env_factor = st.selectbox(
             "",
@@ -441,23 +459,7 @@ if st.session_state.topic == 'Greenhouse Gas':
             key="interested_correlational_env_factor"
         )
     
-    # Display factor description
-    factor_info = factor_descriptions[selected_env_factor]
-    st.markdown(f"""
-    <div style="
-        background-color: #0e1117;
-        padding: 15px;
-        border-radius: 8px;
-        border-left: 4px solid {factor_info['color']};
-        margin: 15px 0;
-        border: 1px solid #262730;
-    ">
-        <div style="display: flex; align-items: center;">
-            <span style="font-size: 20px; margin-right: 10px;">{factor_info['icon']}</span>
-            <span style="color: #a3a8b8; font-size: 14px;">{factor_info['description']}</span>
-        </div>
-    </div>
-    """, unsafe_allow_html=True)
+
 
     # Load the environmental factor data
     df_env = load_dataframe_for_interested_correlational_env_indicator(st.session_state.interested_correlational_env_factor)
