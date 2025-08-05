@@ -399,7 +399,7 @@ if st.session_state.topic == 'Greenhouse Gas':
     st.markdown("---")  # Add a separator line
     st.markdown("""
     <div style="text-align: center; margin: 30px 0;">
-        <h2 style="color: #fafafa; font-size: 32px; margin-bottom: 10px; padding-top: 40px;">
+        <h2 style="color: #fafafa; font-size: 32px; margin-bottom: 10px;">
             🔗 Relationship between GHS Output and Environmental Factors
         </h2>
         <p style="color: #a3a8b8; font-size: 18px; margin-bottom: 20px;">
@@ -407,14 +407,18 @@ if st.session_state.topic == 'Greenhouse Gas':
         </p>
     </div>
     """, unsafe_allow_html=True)
-    col1, col2 = st.columns([1, 2])
-    with col1:
+    
+    # Create columns for better layout
+    col_env1, col_env2 = st.columns([2, 1])
+    
+    with col_env1:
         st.markdown("#### 🌱 Select Environmental Factor", unsafe_allow_html=True)
         env_factor_options = [
             'Agricultural Energy Consumption (Tonnes of oil equivalent)', 
             'Agricultural Land Area (Hectares)', 
             'Agricultural Water Use (Cubic meters)'
         ]
+        
         # Add descriptions for each environmental factor
         factor_descriptions = {
             'Agricultural Energy Consumption (Tonnes of oil equivalent)': {
@@ -433,13 +437,13 @@ if st.session_state.topic == 'Greenhouse Gas':
                 'color': '#3498db'
             }
         }
-
-    with col2:
+        
         selected_env_factor = st.selectbox(
             "",
             env_factor_options,
             key="interested_correlational_env_factor"
         )
+        
         # Display factor description
         factor_info = factor_descriptions[selected_env_factor]
         st.markdown(f"""
@@ -458,35 +462,36 @@ if st.session_state.topic == 'Greenhouse Gas':
         </div>
         """, unsafe_allow_html=True)
     
-
+    with col_env2:
+        st.markdown("#### ⚙️ View Configuration", unsafe_allow_html=True)
+        st.markdown("<br>", unsafe_allow_html=True)  # Add some spacing
+        
+        # Style the toggle with better visual representation
+        view_toggle = st.toggle(
+            "📊 Static View / 🎬 Animated View", 
+            value=False, 
+            key="accumulated_env_toggle"
+        )
+        
+        # Add explanatory text for the toggle
+        if view_toggle:
+            st.markdown("""
+            <div style="color: #a3a8b8; font-size: 12px; margin-top: 10px;">
+                🎬 <strong>Animated Mode:</strong> Shows evolution over time
+            </div>
+            """, unsafe_allow_html=True)
+        else:
+            st.markdown("""
+            <div style="color: #a3a8b8; font-size: 12px; margin-top: 10px;">
+                📊 <strong>Static Mode:</strong> Shows cumulative relationship
+            </div>
+            """, unsafe_allow_html=True)
 
     # Load the environmental factor data
     df_env = load_dataframe_for_interested_correlational_env_indicator(st.session_state.interested_correlational_env_factor)
 
     # Main correlation visualization
-    st.markdown("### 🎯 Correlation", unsafe_allow_html=True)
-    st.markdown("<br>", unsafe_allow_html=True)  # Add some spacing
-    
-    # Style the toggle with better visual representation
-    view_toggle = st.toggle(
-        "📊 Static View / 🎬 Animated View", 
-        value=False, 
-        key="accumulated_env_toggle"
-    )
-    
-    # Add explanatory text for the toggle
-    if view_toggle:
-        st.markdown("""
-        <div style="color: #a3a8b8; font-size: 12px; margin-top: 10px;">
-            🎬 <strong>Animated Mode:</strong> Shows evolution over time
-        </div>
-        """, unsafe_allow_html=True)
-    else:
-        st.markdown("""
-        <div style="color: #a3a8b8; font-size: 12px; margin-top: 10px;">
-            📊 <strong>Static Mode:</strong> Shows cumulative relationship
-        </div>
-        """, unsafe_allow_html=True)
+    st.markdown("### 🎯 Correlation Visualization", unsafe_allow_html=True)
 
     if st.session_state.accumulated_env_toggle == False:
         st.plotly_chart(static_bubble(df_filtered, df_env, st.session_state.interested_correlational_env_factor), use_container_width=True, key="static_bubble_chart")
