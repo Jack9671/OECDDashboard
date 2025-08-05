@@ -415,7 +415,11 @@ if st.session_state.topic == 'Greenhouse Gas':
             'Agricultural Land Area (Hectares)', 
             'Agricultural Water Use (Cubic meters)'
         ]
-        
+        selected_env_factor = st.selectbox(
+            "",
+            env_factor_options,
+            key="interested_correlational_env_factor"
+        )
         # Add descriptions for each environmental factor
         factor_descriptions = {
             'Agricultural Energy Consumption (Tonnes of oil equivalent)': {
