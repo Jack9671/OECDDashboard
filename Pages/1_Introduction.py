@@ -147,7 +147,7 @@ with col1:
     st.markdown("""
     <div style="background-color: #0e1117; padding: 20px; border-radius: 10px; border-left: 5px solid #ff6b6b; border: 1px solid #262730;">
         <h3 style="color: #ff6b6b; margin-top: 0;">🌿 Nguyen Xuan Duy Thai</h3>
-        <p style="color: #fafafa; font-weight: bold;">Lead Developer - Greenhouse Gas Analysis</p>
+        <p style="color: #fafafa; font-weight: bold;">Lead Developer - Greenhouse Gas Topic</p>
         <ul style="color: #a3a8b8;">
             <li>Enhanced waterfall charts with dynamic font sizing</li>
             <li>Country-specific color coding system</li>
@@ -161,13 +161,7 @@ with col2:
     st.markdown("""
     <div style="background-color: #0e1117; padding: 20px; border-radius: 10px; border-left: 5px solid #4ecdc4; border: 1px solid #262730;">
         <h3 style="color: #4ecdc4; margin-top: 0;">🌱 Nguyen Minh Dang</h3>
-        <p style="color: #fafafa; font-weight: bold;">Developer - Environmental Correlation Analysis</p>
-        <ul style="color: #a3a8b8;">
-            <li>Nutrient input/output analysis systems</li>
-            <li>Multi-variable correlation frameworks</li>
-            <li>Agricultural environmental indicators</li>
-            <li>Statistical analysis components</li>
-        </ul>
+        <p style="color: #fafafa; font-weight: bold;">Developer - Nutrient Input/Output Topic</p>
     </div>
     """, unsafe_allow_html=True)
 
