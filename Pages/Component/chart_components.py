@@ -544,8 +544,9 @@ def bar_line(df: pd.DataFrame, x_axis_variable: str, category_to_stack: str, cat
     df_pivoted = df.pivot_table(index=x_axis_variable, columns=category_to_stack, values='OBS_VALUE', aggfunc='sum').reset_index()
     # Add 'total' column for total greenhouse gas output using only available measures
     df_pivoted['total'] = df_pivoted.iloc[:, 1:].sum(axis=1)
-    #sort descending by total
-    df_pivoted = df_pivoted.sort_values(by='total', ascending=False)
+    #sort descending by total only if x_axis_variable is not 'TIME_PERIOD'
+    if x_axis_variable != 'TIME_PERIOD':
+        df_pivoted = df_pivoted.sort_values(by='total', ascending=False) 
     # Create a stacked bar chart using Plotly Express
     fig_stacked = px.bar(df_pivoted, x=x_axis_variable, y=df_pivoted.columns[1:-1],  # Exclude 'total' column
                         title=f"GHS output of accumulated sum of all {category_name} per {x_axis_variable}",
@@ -691,8 +692,10 @@ def percentage_bar_line(df: pd.DataFrame, x_axis_variable: str, category_to_stac
         df_percentage[col] = (df_pivoted_for_percentage[col].abs() / df_percentage['abs_total']) * 100 * np.sign(df_pivoted_for_percentage[col])
     # Fill NaN values with 0
     df_percentage = df_percentage.fillna(0)
-    #sort descending by total
-    df_percentage = df_percentage.sort_values(by='abs_total', ascending=False)
+    #sort descending by total only if x_axis_variable is not 'TIME_PERIOD'
+    if x_axis_variable != 'TIME_PERIOD':
+        df_percentage = df_percentage.sort_values(by='abs_total', ascending=False)
+
     # Function to format large numbers
     def format_number(value):
         if pd.isna(value) or value == 0:
