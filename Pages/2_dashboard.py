@@ -194,7 +194,7 @@ if st.session_state.topic == 'Greenhouse Gas':
         subtopic_info = {
             'Without LULUCF': {
                 'icon': '🏭',
-                'title': 'GreenhoOutput (Excluding LULUCF)',
+                'title': 'Greenhouse Gas Output (Excluding LULUCF)',
                 'description': 'This analysis focuses on Greenhouse Gas Output excluding Land Use, Land-Use Change, and Forestry (LULUCF). It covers emissions from industrial, energy, agriculture, and waste sectors.',
                 'color': '#ff6b6b'
             },
