@@ -399,7 +399,7 @@ if st.session_state.topic == 'Greenhouse Gas':
     st.markdown("---")  # Add a separator line
     st.markdown("""
     <div style="text-align: center; margin: 30px 0;">
-        <h2 style="color: #fafafa; font-size: 32px; margin-bottom: 10px; padding-top: 20px;">
+        <h2 style="color: #fafafa; font-size: 32px; margin-bottom: 10px; padding-top: 40px;">
             🔗 Relationship between GHS Output and Environmental Factors
         </h2>
         <p style="color: #a3a8b8; font-size: 18px; margin-bottom: 20px;">
