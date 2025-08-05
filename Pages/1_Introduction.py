@@ -68,6 +68,24 @@ with col1:
 with col2:
     st.success("🚀 **Get Started**: Head to the Dashboard to begin exploring the data!")
 
+# Contributors Section
+st.markdown("---")
+st.markdown("## 👥 Contributors")
+
+col1, col2 = st.columns(2)
+
+with col1:
+    st.markdown("""
+    ### 🌿 Nguyen Xuan Duy Thai
+    **Responsibility**: Greenhouse Gas Topic
+    """)
+
+with col2:
+    st.markdown("""
+    ### 🌱 Nguyen Minh Dang
+    **Responsibility**: Nutrient Input/Output Topic
+    """)
+
 # Footer
 st.markdown("---")
 st.markdown("*This dashboard is designed for educational and research purposes. Data source: OECD Environmental Statistics.*")

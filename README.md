@@ -85,6 +85,22 @@ All data is sourced from the Organisation for Economic Co-operation and Developm
 - OECD Agriculture and Fisheries Statistics
 - OECD Green Growth Indicators
 
+## 👥 Contributors
+
+### 🌿 Nguyen Xuan Duy Thai
+**Responsibility**: Greenhouse Gas Topic
+- Developed comprehensive greenhouse gas emission analysis features
+- Implemented visualization for emissions with/without LULUCF data
+- Created sector-based and nature source emission categorizations
+- Designed interactive charts and filtering systems for GHS data
+
+### 🌱 Nguyen Minh Dang  
+**Responsibility**: Nutrient Input/Output Topic
+- Developed agricultural nutrient flow analysis components
+- Implemented environmental sustainability metrics visualization
+- Created correlation analysis between environmental factors
+- Designed data processing pipelines for nutrient input/output data
+
 ## 🤝 Contributing
 
 1. Fork the repository
