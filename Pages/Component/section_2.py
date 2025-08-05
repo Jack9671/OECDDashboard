@@ -111,7 +111,39 @@ def summary_statistics(df: pd.DataFrame, user_config: dict[str, str]) -> pd.Data
     return summary_df
 
 def section_2(df: pd.DataFrame):
-    st.write("## Summary Statistics")    
+    # Summary Statistics section with enhanced styling
+    st.markdown("""
+    <div style="text-align: center; margin: 40px 0 30px 0;">
+        <h2 style="
+            color: #fafafa; 
+            font-size: 36px; 
+            margin-bottom: 15px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+            background: linear-gradient(45deg, #f39c12, #e67e22);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        ">
+            📊 Summary Statistics
+        </h2>
+        <p style="
+            color: #a3a8b8; 
+            font-size: 18px; 
+            margin-bottom: 20px;
+            font-style: italic;
+        ">
+            Key insights and trends from your selected data configuration
+        </p>
+        <div style="
+            width: 100px; 
+            height: 3px; 
+            background: linear-gradient(45deg, #f39c12, #e67e22); 
+            margin: 0 auto;
+            border-radius: 2px;
+        "></div>
+    </div>
+    """, unsafe_allow_html=True)
+    
     # Create styled info cards for summary information
     info_col1, info_col2 = st.columns(2)
     with info_col1:
