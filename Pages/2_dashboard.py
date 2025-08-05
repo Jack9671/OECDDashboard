@@ -905,27 +905,19 @@ def animated_bubble(df_ghs: pd.DataFrame, df_x: pd.DataFrame, x_axis_label: str)
     # Set a minimum marker size for visibility
     fig.update_traces(marker=dict(sizemin=1))
     return fig
-def simple_bar(df: pd.DataFrame, x_axis_variable: str, category_to_stack: str, category_name: str) -> go.Figure:
+def water_fall(df: pd.DataFrame, x_axis_variable: str, category_to_stack: str, category_name: str) -> go.Figure:
     df_pivoted = df.pivot_table(index=x_axis_variable, columns=category_to_stack, values='OBS_VALUE', aggfunc='sum').reset_index()
     # Add 'total' column for total greenhouse gas output using only available measures
     df_pivoted['total'] = df_pivoted.iloc[:, 1:].sum(axis=1)
     #sort descending by total
     df_pivoted = df_pivoted.sort_values(by='total', ascending=False)
     
+    color_map = get_color_mapping(df, x_axis_variable) if x_axis_variable == 'REF_AREA' else {}
+    
     # Create waterfall chart with individual values and total
     x_values = df_pivoted[x_axis_variable].tolist()
     y_values = df_pivoted['total'].tolist()
     total_sum = sum(y_values)
-    
-    # Add individual values and then the total
-    x_values_extended = x_values + ['TOTAL']
-    y_values_extended = y_values + [total_sum]
-    
-    # Prepare data for waterfall chart - all individual values are relative, total is absolute
-    measure_types = ['relative'] * len(y_values) + ['total']
-    
-    # Calculate percentages for each value
-    percentages = [(val / total_sum) * 100 for val in y_values] + [100.0]
     
     # Function to format large numbers for better readability
     def format_number(value):
@@ -940,41 +932,122 @@ def simple_bar(df: pd.DataFrame, x_axis_variable: str, category_to_stack: str, c
         else:
             return f"{value:.0f}"
 
-    # Create text labels with both value and percentage
-    text_labels = []
-    for i, (val, pct) in enumerate(zip(y_values_extended, percentages)):
-        formatted_val = format_number(val)
-        if i < len(y_values):  # Individual values
-            text_labels.append(f"{formatted_val}<br>({pct:.1f}%)")
-        else:  # Total
-            text_labels.append(f"{formatted_val}<br>(100%)")
+    # Calculate percentages for each value
+    percentages = [(val / total_sum) * 100 for val in y_values]
     
-    # Create waterfall chart
-    fig_simple = go.Figure(go.Waterfall(
-        name="Contributions", 
-        orientation="v",
-        measure=measure_types,
-        x=x_values_extended,
-        textposition="outside",
-        text=text_labels,
-        y=y_values_extended,
-        connector={"line":{"color":"rgb(63, 63, 63)"}},
-        increasing={"marker":{"color":"green"}},
-        decreasing={"marker":{"color":"red"}},
-        totals={"marker":{"color":"blue", "line":{"color":"white", "width":2}}}
+    # Create the figure
+    fig_simple = go.Figure()
+    
+    # Add individual bars for each country/category with custom colors
+    cumulative = 0
+    for i, (x_val, y_val, pct) in enumerate(zip(x_values, y_values, percentages)):
+        # Determine color for this bar
+        if x_axis_variable == 'REF_AREA' and x_val in color_map:
+            bar_color = color_map[x_val]
+        elif y_val >= 0:
+            bar_color = "green"
+        else:
+            bar_color = "red"
+        
+        # Create text labels - show country name inside bar and value/percentage outside
+        formatted_val = format_number(y_val)
+        
+        # Text inside the bar (country name)
+        inside_text = str(x_val)
+        
+        # Text outside the bar (value and percentage)
+        outside_text = f"{formatted_val}<br>({pct:.1f}%)"
+        
+        # Add bar trace with inside text (country name)
+        fig_simple.add_trace(go.Bar(
+            x=[x_val],
+            y=[y_val],
+            base=[cumulative],
+            name=str(x_val),
+            marker_color=bar_color,
+            marker_line=dict(color="white", width=1),
+            text=[inside_text],
+            textposition="inside",
+            textfont=dict(color="white", size=14, family="Arial Black"),
+            hovertemplate=f"<b>{x_axis_variable}:</b> {x_val}<br>" +
+                         f"<b>Value:</b> {formatted_val}<br>" +
+                         f"<b>Percentage:</b> {pct:.1f}%<extra></extra>",
+            showlegend=False,
+        ))
+        
+        # Add separate annotation for value and percentage outside the bar
+        fig_simple.add_annotation(
+            x=x_val,
+            y=cumulative + y_val,
+            text=outside_text,
+            showarrow=False,
+            yshift=10,
+            xanchor="center",
+            yanchor="bottom"
+        )
+        
+        # Update cumulative for next bar
+        cumulative += y_val
+    
+    # Add total bar
+    total_formatted = format_number(total_sum)
+    fig_simple.add_trace(go.Bar(
+        x=['TOTAL'],
+        y=[total_sum],
+        name='Total',
+        marker_color="blue",
+        marker_line=dict(color="white", width=2),
+        text=['TOTAL'],
+        textposition="inside",
+        hovertemplate=f"<b>Total:</b> {total_formatted}<br>" +
+                     f"<b>Percentage:</b> 100%<extra></extra>",
+        showlegend=False
     ))
     
-    fig_simple.update_layout(
-        title=f"Waterfall Chart: {category_name} Contributions by {x_axis_variable}",
-        showlegend=False,
-        template='plotly_dark',
-        width=700, 
-        height=600,
-        title_font=dict(size=20),
-        font=dict(size=20), 
-        title_x=0.1
+    # Add annotation for total value and percentage
+    fig_simple.add_annotation(
+        x='TOTAL',
+        y=total_sum,
+        text=f"{total_formatted}<br>(100%)",
+        showarrow=False,
+        yshift=10,
+        xanchor="center",
+        yanchor="bottom"
     )
     
+    # Add connector lines between bars
+    for i in range(len(x_values)):
+        if i < len(x_values) - 1:
+            # Calculate positions for connector lines
+            x_start = i + 0.4  # End of current bar
+            x_end = i + 1 - 0.4  # Start of next bar
+            y_level = sum(y_values[:i+1])  # Cumulative sum up to current bar
+            
+            fig_simple.add_shape(
+                type="line",
+                x0=x_start, y0=y_level,
+                x1=x_end, y1=y_level,
+                line=dict(color="rgb(63, 63, 63)", width=1, dash="dot"),
+            )
+    
+    fig_simple.update_layout(
+        title=f"{category_name} Contributions by {x_axis_variable}",
+        showlegend=False,
+        template='plotly_dark',
+        width=800, 
+        height=800,
+        title_font=dict(size=30),
+        font=dict(size=20), 
+        title_x=0.1,
+        barmode='relative',
+        xaxis=dict(title=x_axis_variable),
+        yaxis=dict(title="Gas Output (Tonnes of CO2-equivalent)")
+    )
+    
+    #increase max range of y-axis
+    max_y_value = max(max(y_values), total_sum) * 1.25  # Increase by 25% for better visibility
+    fig_simple.update_yaxes(range=[0, max_y_value])
+    #hide x-axis labels
     return fig_simple
 
 # ============================================================================
@@ -1016,31 +1089,31 @@ if st.session_state.topic == 'Greenhouse Gas':
         subtopic_info = {
             'Without LULUCF': {
                 'icon': '🏭',
-                'title': 'Greenhouse Gas Emissions (Excluding LULUCF)',
+                'title': 'GreenhoOutput (Excluding LULUCF)',
                 'description': 'This analysis focuses on Greenhouse Gas Output excluding Land Use, Land-Use Change, and Forestry (LULUCF). It covers emissions from industrial, energy, agriculture, and waste sectors.',
                 'color': '#ff6b6b'
             },
             'From LULUCF': {
                 'icon': '🌳',
-                'title': 'Greenhouse Gas Emissions (From LULUCF)',
+                'title': 'Greenhouse Gas Output (From LULUCF)',
                 'description': 'This analysis focuses on Greenhouse Gas Output specifically from Land Use, Land-Use Change, and Forestry (LULUCF). It includes emissions and carbon sequestration from forests and land conversion.',
                 'color': '#4ecdc4'
             },
             'With LULUCF': {
                 'icon': '🌍',
-                'title': 'Total Greenhouse Gas Emissions (Including LULUCF)',
+                'title': 'Total Greenhouse Gas Output (Including LULUCF)',
                 'description': 'This comprehensive analysis includes Greenhouse Gas Output from all sources, including Land Use, Land-Use Change, and Forestry (LULUCF). It provides the complete picture of net change in greenhouse gas output.',
                 'color': '#45b7d1'
             },
             'Sector': {
                 'icon': '🏗️',
-                'title': 'Greenhouse Gas Emissions by Sectors',
+                'title': 'Greenhouse Gas Output by Sectors',
                 'description': 'This analysis breaks down Greenhouse Gas Output by economic sectors such as energy, industry, agriculture, transport, and waste. It helps identify which sectors contribute most to emissions.',
                 'color': '#f39c12'
             },
             'Nature Source': {
                 'icon': '⚗️',
-                'title': 'Greenhouse Gas Emissions by Nature Sources',
+                'title': 'Greenhouse Gas Output by Nature Sources',
                 'description': 'This analysis categorizes Greenhouse Gas Output by the natural sources such as cropland, grassland, wetlands, and other ecosystems. It helps understand the role of nature in greenhouse gas absorption and emissions.',
                 'color': '#9b59b6'
             }
@@ -1157,7 +1230,7 @@ if st.session_state.topic == 'Greenhouse Gas':
             🔗 Relationship between GHS Output and Environmental Factors
         </h2>
         <p style="color: #a3a8b8; font-size: 18px; margin-bottom: 20px;">
-            Explore correlations between greenhouse gas emissions and key environmental indicators
+            Explore correlations between greenhouse gas output and key environmental indicators
         </p>
     </div>
     """, unsafe_allow_html=True)
@@ -1253,12 +1326,9 @@ if st.session_state.topic == 'Greenhouse Gas':
         st.plotly_chart(animated_bubble(df_filtered, df_env, st.session_state.interested_correlational_env_factor), use_container_width=True, key="animated_bubble_chart")
     
     # Environmental factor breakdown section
-    st.markdown("### 📋 Environmental Factor Breakdown", unsafe_allow_html=True)
+    st.markdown("### 📋 Environmental Factor Breakdown Per Country (REF_AREA)", unsafe_allow_html=True)
     # Filter based on selected countries and time period only
     df_env = df_env[df_env['REF_AREA'].isin(df_filtered['REF_AREA']) & df_env['TIME_PERIOD'].isin(df_filtered['TIME_PERIOD'])]
-    st.plotly_chart(simple_bar(df_env, 'REF_AREA', 'MEASURE', st.session_state.interested_correlational_env_factor), use_container_width=True, key="env_bar_chart")
+    st.plotly_chart(water_fall(df_env, 'REF_AREA', 'MEASURE', st.session_state.interested_correlational_env_factor), use_container_width=True, key="waterfall_chart")
 elif st.session_state.topic == 'Nutrient Input and Output':
     st.write("This topic is not yet implemented.")
-
-
-
