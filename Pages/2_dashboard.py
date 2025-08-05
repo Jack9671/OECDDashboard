@@ -341,7 +341,7 @@ if st.session_state.topic == 'Greenhouse Gas':
     st.write(df_filtered[['TIME_PERIOD', 'REF_AREA', 'MEASURE', 'OBS_VALUE']].sort_values(by=['TIME_PERIOD', 'REF_AREA', 'MEASURE']).reset_index(drop=True))
     # Styled chart configuration section
     st.markdown("### ⚙️ Chart Customization", unsafe_allow_html=True)     
-    col_config1, col_config2 = st.columns(2)
+    col_config1, col_config2, col_config3 = st.columns(3)
     
     with col_config1:
         x_axis_options = ['REF_AREA', 'MEASURE', 'TIME_PERIOD']
@@ -349,6 +349,29 @@ if st.session_state.topic == 'Greenhouse Gas':
         selected_x_axis = st.selectbox("X-Axis Variable", x_axis_options, key="x_axis_select")
     
     with col_config2:
+        # Display Y-axis as hardcoded value with styling
+        st.markdown("**Y-Axis Variable**")
+        st.markdown(f"""
+        <div style="
+            background-color: #0e1117;
+            padding: 15px;
+            border-radius: 8px;
+            border-left: 4px solid #4ecdc4;
+            margin: 5px 0;
+            border: 1px solid #262730;
+            text-align: center;
+        ">
+            <div style="display: flex; align-items: center; justify-content: center;">
+                <span style="font-size: 20px; margin-right: 10px;">📊</span>
+                <span style="color: #fafafa; font-size: 16px; font-weight: bold;">GHS Output</span>
+            </div>
+            <div style="color: #a3a8b8; font-size: 12px; margin-top: 5px;">
+                (Fixed Y-axis for all charts)
+            </div>
+        </div>
+        """, unsafe_allow_html=True)
+    
+    with col_config3:
         # Filter out the selected x_axis option to prevent same selection
         category_options = ['MEASURE', 'REF_AREA']
         available_category_options = [opt for opt in category_options if opt != selected_x_axis]
