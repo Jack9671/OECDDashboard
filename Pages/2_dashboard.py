@@ -158,7 +158,7 @@ def static_map(df: pd.DataFrame, projection_type: str = 'mercator') -> go.Figure
         color='OBS_VALUE',
         color_continuous_scale=px.colors.sequential.Viridis_r,
         title="GHS output by country",
-        labels={'OBS_VALUE':'Total Gas Output (tonnes)', 'REF_AREA':'Country'},
+        labels={'OBS_VALUE':'Gas Output (Tonnes of CO2-equivalent)', 'REF_AREA':'Country'},
         range_color=[0, df_sum['OBS_VALUE'].max()],
         template='plotly_dark',
         width=500,
@@ -186,9 +186,9 @@ def animated_map(df: pd.DataFrame, projection_type: str = 'mercator'):
                                 color_continuous_scale=px.colors.sequential.Viridis_r,
                                 animation_frame='TIME_PERIOD',
                                 title=f"Evolution of GHS Distribution per Year",
-                                labels={'OBS_VALUE': 'Total Gas Output (in tonnes)',
-                                    'REF_AREA': 'Country Code',
-                                    'TIME_PERIOD': 'Year'},
+                                labels={'OBS_VALUE': 'Gas Output (Tonnes of CO2-equivalent)',
+                                        'REF_AREA': 'Country Code',
+                                        'TIME_PERIOD': 'Year'},
                                 range_color=[0, df_map_animated['OBS_VALUE'].max()],
                                 template='plotly_dark',
                                 width=600,
@@ -214,7 +214,7 @@ def bar_line(df: pd.DataFrame, x_axis_variable: str, category_to_stack: str, cat
     # Create a stacked bar chart using Plotly Express
     fig_stacked = px.bar(df_pivoted, x=x_axis_variable, y=df_pivoted.columns[1:-1],  # Exclude 'total' column
                         title=f"GHS output of accumulated sum of all {category_name} per {x_axis_variable}",
-                        labels= {'value': 'Gas Output (in tonnes)', 'variable': category_name},
+                        labels= {'value': 'Gas Output (Tonnes of CO2-equivalent)', 'variable': category_name},
                         template='plotly_dark', width=700, height=600, barmode ='relative')
 
     fig_stacked.update_traces(marker=dict(line=dict(width=1, color='DarkSlateGrey')))
@@ -335,7 +335,7 @@ def bar_line(df: pd.DataFrame, x_axis_variable: str, category_to_stack: str, cat
         line=dict(color='yellow', width=3, shape='linear'),
         marker=dict(size=7, color='yellow', symbol='circle'),
         yaxis='y',
-        hovertemplate=f'<b>{x_axis_variable}:</b> %{{x}}<br><b>Total:</b> %{{y:,.0f}} tonnes<extra></extra>'
+        hovertemplate=f'<b>{x_axis_variable}:</b> %{{x}}<br><b>Total:</b> %{{y:,.0f}} Tonnes of CO2-equivalent<extra></extra>'
     ))
     return fig_stacked
 
@@ -469,7 +469,7 @@ def multi_line(df: pd.DataFrame, x_axis_variable: str, variable_for_category: st
     if chart_type == "area":
         fig_line = px.area(df_pivoted, x='TIME_PERIOD', y=df_pivoted.columns[1:-1],  # Exclude 'total' column
                           title=f"Accumulative GHS output for each {category_name} of each {x_axis_variable} per Year",
-                          labels={'TIME_PERIOD': 'Year', 'value': 'Gas Output (in tonnes)', 'variable': category_name},
+                          labels={'TIME_PERIOD': 'Year', 'value': 'Gas Output (Tonnes of CO2-equivalent)', 'variable': category_name},
                           template='plotly_dark', width=700, height=600,
                           color_discrete_map=color_map)
         fig_line.update_traces(
@@ -550,7 +550,7 @@ def multi_line(df: pd.DataFrame, x_axis_variable: str, variable_for_category: st
         # Create a normal line chart using Plotly Express with explicit color mapping
         fig_line = px.line(df_pivoted, x='TIME_PERIOD', y=df_pivoted.columns[1:-1],  # Exclude 'total' column
                           title=f"GHS output for each {category_name} per Year",
-                          labels={'TIME_PERIOD': 'Year', 'value': 'Gas Output (in tonnes)', 'variable': category_name},
+                          labels={'TIME_PERIOD': 'Year', 'value': 'Gas Output (Tonnes of CO2-equivalent)', 'variable': category_name},
                           template='plotly_dark', width=700, height=600,
                           color_discrete_map=color_map)
         fig_line.update_traces(mode='lines+markers', marker=dict(size=7), line=dict(width=3))
@@ -576,7 +576,7 @@ def animated_hor_bar(df: pd.DataFrame, col_to_rank: str) -> go.Figure:
     fig = px.bar(df_sorted,
                 x='OBS_VALUE', y= col_to_rank,
                 title=f"Evolution of GHS output for each {col_to_rank} per year",
-                labels={'OBS_VALUE': 'Gas Output (in tonnes)'},
+                labels={'OBS_VALUE': 'Gas Output (Tonnes of CO2-equivalent)'},
                 color_discrete_map=color_map,
                 color= col_to_rank,
                 animation_frame='TIME_PERIOD',
@@ -593,7 +593,7 @@ def animated_hor_bar(df: pd.DataFrame, col_to_rank: str) -> go.Figure:
         marker=dict(line=dict(width=1, color='DarkSlateGrey')),
         # Add hover template for better interactivity
         hovertemplate='<b>%{y}</b><br>' +
-                     'Gas Output: %{x:,.0f} tonnes<br>' +
+                     'Gas Output: %{x:,.0f} Tonnes of CO2-equivalent<br>' +
                      'Year: %{customdata}<br>' +
                      '<extra></extra>'
     )
@@ -632,7 +632,7 @@ def animated_hor_bar(df: pd.DataFrame, col_to_rank: str) -> go.Figure:
             title= col_to_rank.replace('_', ' ').title(),
         ),
         xaxis=dict(
-            title='Gas Output (in tonnes)'
+            title='Gas Output (Tonnes of CO2-equivalent)'
         ),
         # Add slider for manual frame control
         sliders=[{
@@ -803,7 +803,7 @@ def static_bubble(df_ghs: pd.DataFrame, df_x: pd.DataFrame, x_axis_label: str) -
         text='REF_AREA',  # Add text labels with each scatter point
         labels={
             'OBS_VALUE_x': x_axis_label,
-            'OBS_VALUE_y': 'GHS output (in tonnes)'
+            'OBS_VALUE_y': 'GHS output (Tonnes of CO2-equivalent)'
         },
         title=f"The relationship between {x_axis_label}, Population, and GHS Output",
         width=1000, 
@@ -841,7 +841,7 @@ def animated_bubble(df_ghs: pd.DataFrame, df_x: pd.DataFrame, x_axis_label: str)
         text='REF_AREA',  # Add text labels with each scatter point
         labels={
             'OBS_VALUE_x': x_axis_label,
-            'OBS_VALUE_y': 'Total Greenhouse Gas Output (in tonnes)'},
+            'OBS_VALUE_y': 'Total Greenhouse Gas Output (Tonnes of CO2-equivalent)'},
         title=f"Evolution of the relationship between {x_axis_label}, Population, and GHS Output per year",
         width=1000, 
         height=800,
