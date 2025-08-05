@@ -86,8 +86,60 @@ def user_config(df: pd.DataFrame)-> dict[str, list]:
     )
     selected_TIME_PERIOD = list(range(year_range[0], year_range[1] + 1))
     
-    selected_REF_AREA = st.sidebar.multiselect("Select Countries", all_countries, default=all_countries[:10])
-    selected_MEASURE = st.sidebar.multiselect("Select Gases", all_measures, default=all_measures[:3])
+    # Countries selection with Select All button
+    st.sidebar.markdown("**Select Countries**")
+    select_all_countries = st.sidebar.button("Select All", key="select_all_countries")
+    
+    # Initialize default countries or use session state, ensuring defaults are valid
+    if 'selected_countries' not in st.session_state or not st.session_state.selected_countries:
+        st.session_state.selected_countries = all_countries[:10]
+    
+    # Ensure selected countries are still valid (exist in current dataset)
+    valid_selected_countries = [country for country in st.session_state.selected_countries if country in all_countries]
+    if not valid_selected_countries:
+        valid_selected_countries = all_countries[:10]
+    
+    if select_all_countries:
+        st.session_state.selected_countries = all_countries
+        valid_selected_countries = all_countries
+    
+    selected_REF_AREA = st.sidebar.multiselect(
+        "",
+        all_countries, 
+        default=valid_selected_countries,
+        key="countries_multiselect"
+    )
+    
+    # Update session state with current selection
+    st.session_state.selected_countries = selected_REF_AREA
+    
+    # Measures selection with Select All button
+    st.sidebar.markdown("**Select Measures**")
+    select_all_measures = st.sidebar.button("Select All", key="select_all_measures")
+    
+    # Initialize default measures or use session state, ensuring defaults are valid
+    if 'selected_measures' not in st.session_state or not st.session_state.selected_measures:
+        st.session_state.selected_measures = all_measures[:3]
+    
+    # Ensure selected measures are still valid (exist in current dataset)
+    valid_selected_measures = [measure for measure in st.session_state.selected_measures if measure in all_measures]
+    if not valid_selected_measures:
+        valid_selected_measures = all_measures[:3]
+    
+    if select_all_measures:
+        st.session_state.selected_measures = all_measures
+        valid_selected_measures = all_measures
+    
+    selected_MEASURE = st.sidebar.multiselect(
+        "",
+        all_measures, 
+        default=valid_selected_measures,
+        key="measures_multiselect"
+    )
+    
+    # Update session state with current selection
+    st.session_state.selected_measures = selected_MEASURE
+    
     return {
         "selected_TIME_PERIOD": selected_TIME_PERIOD,
         "selected_REF_AREA": selected_REF_AREA,
@@ -102,7 +154,7 @@ def filter_data(df: pd.DataFrame, user_config: dict[str, str]) -> pd.DataFrame:
     df = df[(df['TIME_PERIOD'].isin(selected_TIME_PERIOD)) & (df['REF_AREA'].isin(selected_REF_AREA)) & (df['MEASURE'].isin(selected_MEASURE))]
     return df
 
-def sunburst(): # used for the sunburst chart
+def sunburst(): # used for the sunburst chart, hard_coded data for now
     data = {
         'level1': [
             # Without LULUCF (6 items)
@@ -161,8 +213,8 @@ def static_map(df: pd.DataFrame, projection_type: str = 'mercator') -> go.Figure
         labels={'OBS_VALUE':'Gas Output (Tonnes of CO2-equivalent)', 'REF_AREA':'Country'},
         range_color=[0, df_sum['OBS_VALUE'].max()],
         template='plotly_dark',
-        width=500,
-        height=500
+        width=1000,
+        height=1000
     )
     fig.update_layout(
         geo=dict(
@@ -172,7 +224,7 @@ def static_map(df: pd.DataFrame, projection_type: str = 'mercator') -> go.Figure
             landcolor='White',
             projection_type= projection_type,
             showocean=True
-        ),
+        ), title_font=dict(size=30), title_x = 0.3
     )
     return fig
 
@@ -191,8 +243,8 @@ def animated_map(df: pd.DataFrame, projection_type: str = 'mercator'):
                                         'TIME_PERIOD': 'Year'},
                                 range_color=[0, df_map_animated['OBS_VALUE'].max()],
                                 template='plotly_dark',
-                                width=600,
-                                height=600
+                                width=1000,
+                                height=1000
     )
     fig_animated.update_layout(
         geo=dict(
@@ -202,15 +254,17 @@ def animated_map(df: pd.DataFrame, projection_type: str = 'mercator'):
             landcolor='White',
             projection_type= projection_type,
             showocean=True
-        ),
+        ),title_font=dict(size=30), title_x = 0.3
     )
     return fig_animated
+
 
 def bar_line(df: pd.DataFrame, x_axis_variable: str, category_to_stack: str, category_name: str) -> go.Figure:
     df_pivoted = df.pivot_table(index=x_axis_variable, columns=category_to_stack, values='OBS_VALUE', aggfunc='sum').reset_index()
     # Add 'total' column for total greenhouse gas output using only available measures
     df_pivoted['total'] = df_pivoted.iloc[:, 1:].sum(axis=1)
-
+    #sort descending by total
+    df_pivoted = df_pivoted.sort_values(by='total', ascending=False)
     # Create a stacked bar chart using Plotly Express
     fig_stacked = px.bar(df_pivoted, x=x_axis_variable, y=df_pivoted.columns[1:-1],  # Exclude 'total' column
                         title=f"GHS output of accumulated sum of all {category_name} per {x_axis_variable}",
@@ -220,7 +274,7 @@ def bar_line(df: pd.DataFrame, x_axis_variable: str, category_to_stack: str, cat
     fig_stacked.update_traces(marker=dict(line=dict(width=1, color='DarkSlateGrey')))
 
     # Update the layout to stack the bars properly
-    fig_stacked.update_layout(barmode='stack')
+    fig_stacked.update_layout(barmode='relative',title_font=dict(size=20), title_x = 0.1)
 
     # Function to format large numbers
     def format_number(value):
@@ -346,10 +400,8 @@ def percentage_bar_line(df: pd.DataFrame, x_axis_variable: str, category_to_stac
     # Calculate percentages 
     df_percentage = df_pivoted_for_percentage.copy()
     measure_columns = df_percentage.columns[1:]  
-
     # Store original values for display
     df_original = df_pivoted_for_percentage.copy()
-
     # Calculate absolute total for each row (for proper percentage calculation)
     df_percentage['abs_total'] = df_percentage[measure_columns].abs().sum(axis=1)
     # Calculate percentage for each segment within each bar
@@ -357,6 +409,8 @@ def percentage_bar_line(df: pd.DataFrame, x_axis_variable: str, category_to_stac
         df_percentage[col] = (df_pivoted_for_percentage[col].abs() / df_percentage['abs_total']) * 100 * np.sign(df_pivoted_for_percentage[col])
     # Fill NaN values with 0
     df_percentage = df_percentage.fillna(0)
+    #sort descending by total
+    df_percentage = df_percentage.sort_values(by='abs_total', ascending=False)
     # Function to format large numbers
     def format_number(value):
         if pd.isna(value) or value == 0:
@@ -393,7 +447,7 @@ def percentage_bar_line(df: pd.DataFrame, x_axis_variable: str, category_to_stac
             zeroline=True,
             zerolinewidth=3,
             zerolinecolor='white'
-        )
+        ),title_font=dict(size=20), title_x = 0.1
     )
 
     # Add a prominent horizontal line at y=0 for better visual separation
@@ -475,6 +529,7 @@ def multi_line(df: pd.DataFrame, x_axis_variable: str, variable_for_category: st
         fig_line.update_traces(
             line=dict(width=0),  # No line border
         )
+        fig_line.update_layout(title_font=dict(size=20), title_x = 0.1)
         # Add border lines to separate areas
         fig_line.update_traces(marker=dict(line=dict(width=1, color='DarkSlateGrey')))
         
@@ -554,7 +609,7 @@ def multi_line(df: pd.DataFrame, x_axis_variable: str, variable_for_category: st
                           template='plotly_dark', width=700, height=600,
                           color_discrete_map=color_map)
         fig_line.update_traces(mode='lines+markers', marker=dict(size=7), line=dict(width=3))
-    
+        fig_line.update_layout(title_font=dict(size=20), title_x = 0.2)
     return fig_line
 
 
@@ -654,7 +709,7 @@ def animated_hor_bar(df: pd.DataFrame, col_to_rank: str) -> go.Figure:
             'xanchor': 'left',
             'y': 0,
             'yanchor': 'top'
-        }]
+        }], title_font=dict(size=20), title_x = 0.2, title_y = 0.88 
     )
 
     # Add custom data for hover information
@@ -692,7 +747,7 @@ def pie(df: pd.DataFrame, groupby_var: str, category_name: str, value_filter: st
         fig.update_layout(
             template='plotly_dark',
             title=f"Proportion of {category_name}",
-            width=700, height=600
+            width=700, height=600,
         )
         return fig
     
@@ -708,7 +763,7 @@ def pie(df: pd.DataFrame, groupby_var: str, category_name: str, value_filter: st
                  template='plotly_dark', width=700, height=600)
     fig.update_traces(marker=dict(line=dict(width=1, color='DarkSlateGrey')),
                       textposition='inside', textinfo='label+percent')
-    fig.update_layout(showlegend=True, title_x=0.5, font=dict(size=25))
+    fig.update_layout(showlegend=True, font=dict(size=25), title_font=dict(size=25), title_x = 0.3)
     return fig
 
 def tree_map(df: pd.DataFrame, groupby_var: str, category_name: str, value_filter: str = "All Values") -> go.Figure:
@@ -736,12 +791,11 @@ def tree_map(df: pd.DataFrame, groupby_var: str, category_name: str, value_filte
             text=f"No {value_filter.lower()} found in the selected data",
             xref="paper", yref="paper",
             x=0.5, y=0.5, xanchor='center', yanchor='middle',
-            showarrow=False, font=dict(size=16, color='white')
-        )
+            showarrow=False, font=dict(size=16), color='white')
         fig.update_layout(
             template='plotly_dark',
             title=f"Tree Map of {category_name}",
-            width=700, height=600, font=dict(size=25)
+            width=700, height=600, font=dict(size=25), title_font=dict(size=25), title_x=0.3
         )
         return fig
     
@@ -781,10 +835,10 @@ def tree_map(df: pd.DataFrame, groupby_var: str, category_name: str, value_filte
     fig.data[0].customdata = np.array(df_grouped[['custom_text']])
     # Update layout
     fig.update_layout(
-        title_x=0.5,
-        font=dict(size=25)
+        font=dict(size=25),title_font=dict(size=25), title_x=0.3
     )
     return fig
+
 
 def static_bubble(df_ghs: pd.DataFrame, df_x: pd.DataFrame, x_axis_label: str) -> go.Figure:
     df_pop = pd.read_csv(BASE_DIR / 'Population' / 'AnnualPopulationOECDCountry.csv')
@@ -817,9 +871,8 @@ def static_bubble(df_ghs: pd.DataFrame, df_x: pd.DataFrame, x_axis_label: str) -
     text="output of 3 variables of each country is accumulated over time except for the population being the median",
     xref="paper", yref="paper",
     x=0.5, y=0,  # Position below the plot
-    showarrow=False,
-    font=dict(size=12, color="red")
-)
+    showarrow=False, font=dict(size=15, color="red"))
+    fig.update_layout(title_font=dict(size=30), title_x=0.08, font=dict(size=20))
     return fig
 
 
@@ -848,9 +901,81 @@ def animated_bubble(df_ghs: pd.DataFrame, df_x: pd.DataFrame, x_axis_label: str)
         size_max=50,  # Remove upper limit by setting very high value
         template='plotly_dark',
     )
+    fig.update_layout(font=dict(size=20), title_font=dict(size=25), title_x=0.08)
     # Set a minimum marker size for visibility
     fig.update_traces(marker=dict(sizemin=1))
     return fig
+def simple_bar(df: pd.DataFrame, x_axis_variable: str, category_to_stack: str, category_name: str) -> go.Figure:
+    df_pivoted = df.pivot_table(index=x_axis_variable, columns=category_to_stack, values='OBS_VALUE', aggfunc='sum').reset_index()
+    # Add 'total' column for total greenhouse gas output using only available measures
+    df_pivoted['total'] = df_pivoted.iloc[:, 1:].sum(axis=1)
+    #sort descending by total
+    df_pivoted = df_pivoted.sort_values(by='total', ascending=False)
+    
+    # Create waterfall chart with individual values and total
+    x_values = df_pivoted[x_axis_variable].tolist()
+    y_values = df_pivoted['total'].tolist()
+    total_sum = sum(y_values)
+    
+    # Add individual values and then the total
+    x_values_extended = x_values + ['TOTAL']
+    y_values_extended = y_values + [total_sum]
+    
+    # Prepare data for waterfall chart - all individual values are relative, total is absolute
+    measure_types = ['relative'] * len(y_values) + ['total']
+    
+    # Calculate percentages for each value
+    percentages = [(val / total_sum) * 100 for val in y_values] + [100.0]
+    
+    # Function to format large numbers for better readability
+    def format_number(value):
+        if pd.isna(value) or value == 0:
+            return "0"
+        elif abs(value) >= 1e9:
+            return f"{value/1e9:.1f}B"
+        elif abs(value) >= 1e6:
+            return f"{value/1e6:.1f}M"
+        elif abs(value) >= 1e3:
+            return f"{value/1e3:.1f}k"
+        else:
+            return f"{value:.0f}"
+
+    # Create text labels with both value and percentage
+    text_labels = []
+    for i, (val, pct) in enumerate(zip(y_values_extended, percentages)):
+        formatted_val = format_number(val)
+        if i < len(y_values):  # Individual values
+            text_labels.append(f"{formatted_val}<br>({pct:.1f}%)")
+        else:  # Total
+            text_labels.append(f"{formatted_val}<br>(100%)")
+    
+    # Create waterfall chart
+    fig_simple = go.Figure(go.Waterfall(
+        name="Contributions", 
+        orientation="v",
+        measure=measure_types,
+        x=x_values_extended,
+        textposition="outside",
+        text=text_labels,
+        y=y_values_extended,
+        connector={"line":{"color":"rgb(63, 63, 63)"}},
+        increasing={"marker":{"color":"green"}},
+        decreasing={"marker":{"color":"red"}},
+        totals={"marker":{"color":"blue", "line":{"color":"white", "width":2}}}
+    ))
+    
+    fig_simple.update_layout(
+        title=f"Waterfall Chart: {category_name} Contributions by {x_axis_variable}",
+        showlegend=False,
+        template='plotly_dark',
+        width=700, 
+        height=600,
+        title_font=dict(size=20),
+        font=dict(size=20), 
+        title_x=0.1
+    )
+    
+    return fig_simple
 
 # ============================================================================
 # initialize session state
@@ -861,10 +986,6 @@ if 'subtopic' not in st.session_state:
     st.session_state.subtopic = None
 if 'user_config' not in st.session_state:
     st.session_state.user_config = None
-if 'projection_type' not in st.session_state:
-    st.session_state.projection_type = 'orthographic'  # Default projection type
-if 'interested_correlational_env_factor' not in st.session_state:
-    st.session_state.interested_correlational_env_factor = 'Agricultural Land Area'
 # ============================================================================
 # MAIN DISPLAY
 # ============================================================================
@@ -883,9 +1004,9 @@ st.markdown("""
     }
 </style>
 """, unsafe_allow_html=True)
-st.markdown("### 📊 Select Topic", unsafe_allow_html=True)
+st.sidebar.markdown("### 📊 Select Topic", unsafe_allow_html=True)
 available_topics = ['Greenhouse Gas', 'Nutrient Input and Output']
-st.session_state.topic = st.selectbox("", available_topics, key="topic_select") 
+st.session_state.topic = st.sidebar.selectbox("", available_topics, key="topic_select") 
 if st.session_state.topic == 'Greenhouse Gas':
     col1, col2 = st.columns(2)
     with col1:
@@ -961,11 +1082,16 @@ if st.session_state.topic == 'Greenhouse Gas':
     section_2(df_filtered)
     #section 3: display static map and animated map
     st.write(f"## Geographic View")
-    st.selectbox("Select Projection Type", ['airy', 'aitoff', 'albers', 'albers usa', 'august', 'azimuthal equal area', 'azimuthal equidistant', 'baker', 'bertin1953', 'boggs', 'bonne', 'bottomley', 'bromley', 'collignon', 'conic conformal', 'conic equal area', 'conic equidistant', 'craig', 'craster', 'cylindrical equal area', 'cylindrical stereographic', 'eckert1', 'eckert2', 'eckert3', 'eckert4', 'eckert5', 'eckert6', 'eisenlohr', 'equal earth', 'equirectangular', 'fahey', 'foucaut', 'foucaut sinusoidal', 'ginzburg4', 'ginzburg5', 'ginzburg6', 'ginzburg8', 'ginzburg9', 'gnomonic', 'gringorten', 'gringorten quincuncial', 'guyou', 'hammer', 'hill', 'homolosine', 'hufnagel', 'hyperelliptical', 'kavrayskiy7', 'lagrange', 'larrivee', 'laskowski', 'loximuthal', 'mercator', 'miller', 'mollweide', 'mt flat polar parabolic', 'mt flat polar quartic', 'mt flat polar sinusoidal', 'natural earth', 'natural earth1', 'natural earth2', 'nell hammer', 'nicolosi', 'orthographic', 'patterson', 'peirce quincuncial', 'polyconic', 'rectangular polyconic', 'robinson', 'satellite', 'sinu mollweide', 'sinusoidal', 'stereographic', 'times', 'transverse mercator', 'van der grinten', 'van der grinten2', 'van der grinten3', 'van der grinten4', 'wagner4', 'wagner6', 'wiechel', 'winkel tripel', 'winkel3'], key='projection_type')
-    col1, col2 = st.columns(2)
-    with col1:
+    st.selectbox(
+        "Select Projection Type",
+        ['airy', 'aitoff', 'albers', 'albers usa', 'august', 'azimuthal equal area', 'azimuthal equidistant', 'baker', 'bertin1953', 'boggs', 'bonne', 'bottomley', 'bromley', 'collignon', 'conic conformal', 'conic equal area', 'conic equidistant', 'craig', 'craster', 'cylindrical equal area', 'cylindrical stereographic', 'eckert1', 'eckert2', 'eckert3', 'eckert4', 'eckert5', 'eckert6', 'eisenlohr', 'equal earth', 'equirectangular', 'fahey', 'foucaut', 'foucaut sinusoidal', 'ginzburg4', 'ginzburg5', 'ginzburg6', 'ginzburg8', 'ginzburg9', 'gnomonic', 'gringorten', 'gringorten quincuncial', 'guyou', 'hammer', 'hill', 'homolosine', 'hufnagel', 'hyperelliptical', 'kavrayskiy7', 'lagrange', 'larrivee', 'laskowski', 'loximuthal', 'mercator', 'miller', 'mollweide', 'mt flat polar parabolic', 'mt flat polar quartic', 'mt flat polar sinusoidal', 'natural earth', 'natural earth1', 'natural earth2', 'nell hammer', 'nicolosi', 'orthographic', 'patterson', 'peirce quincuncial', 'polyconic', 'rectangular polyconic', 'robinson', 'satellite', 'sinu mollweide', 'sinusoidal', 'stereographic', 'times', 'transverse mercator', 'van der grinten', 'van der grinten2', 'van der grinten3', 'van der grinten4', 'wagner4', 'wagner6', 'wiechel', 'winkel tripel', 'winkel3'],
+        key='projection_type',
+        index=63  # 'orthographic' is at index 63 in the list, set as default
+    )
+    st.toggle(" Accumulative View / Annual View", value=False, key="accumulated_ghs_toggle")
+    if st.session_state.accumulated_ghs_toggle == False:
         st.plotly_chart(static_map(df_filtered, st.session_state.projection_type), use_container_width=True, key="static_map")
-    with col2:
+    else:
         st.plotly_chart(animated_map(df_filtered, st.session_state.projection_type), use_container_width=True, key="animated_map")
     st.write("## Analytical View")
     st.write(df_filtered[['TIME_PERIOD', 'REF_AREA', 'MEASURE', 'OBS_VALUE']].sort_values(by=['TIME_PERIOD', 'REF_AREA', 'MEASURE']).reset_index(drop=True))
@@ -1023,18 +1149,114 @@ if st.session_state.topic == 'Greenhouse Gas':
     with col2:
         st.plotly_chart(animated_hor_bar(df_filtered, selected_category), use_container_width=True, key="animated_horizontal_bar_chart")
     
-    st.write("## Relationship between GHS Output and Other Environmental Factors")
-    st.session_state.interested_correlational_env_factor = st.selectbox("Select Which Environmental Factor to explore", ['Agricultural Energy Consumption (Tonnes of oil equivalent)', 'Agricultural Land Area (Hectares)', 'Agricultural Water Use (Cubic meters)'])
+    # section 4: Correlational analysis with enhanced styling
+    st.markdown("---")  # Add a separator line
+    st.markdown("""
+    <div style="text-align: center; margin: 30px 0;">
+        <h2 style="color: #fafafa; font-size: 32px; margin-bottom: 10px;">
+            🔗 Relationship between GHS Output and Environmental Factors
+        </h2>
+        <p style="color: #a3a8b8; font-size: 18px; margin-bottom: 20px;">
+            Explore correlations between greenhouse gas emissions and key environmental indicators
+        </p>
+    </div>
+    """, unsafe_allow_html=True)
+    
+    # Create columns for better layout
+    col_env1, col_env2 = st.columns([2, 1])
+    
+    with col_env1:
+        st.markdown("#### 🌱 Select Environmental Factor", unsafe_allow_html=True)
+        env_factor_options = [
+            'Agricultural Energy Consumption (Tonnes of oil equivalent)', 
+            'Agricultural Land Area (Hectares)', 
+            'Agricultural Water Use (Cubic meters)'
+        ]
+        
+        # Add descriptions for each environmental factor
+        factor_descriptions = {
+            'Agricultural Energy Consumption (Tonnes of oil equivalent)': {
+                'icon': '⚡',
+                'description': 'Energy used in agricultural production and processing',
+                'color': '#f39c12'
+            },
+            'Agricultural Land Area (Hectares)': {
+                'icon': '🌾',
+                'description': 'Total area dedicated to agricultural activities',
+                'color': '#27ae60'
+            },
+            'Agricultural Water Use (Cubic meters)': {
+                'icon': '💧',
+                'description': 'Water consumption for irrigation and livestock',
+                'color': '#3498db'
+            }
+        }
+        
+        selected_env_factor = st.selectbox(
+            "",
+            env_factor_options,
+            key="interested_correlational_env_factor"
+        )
+        
+        # Display factor description
+        factor_info = factor_descriptions[selected_env_factor]
+        st.markdown(f"""
+        <div style="
+            background-color: #0e1117;
+            padding: 15px;
+            border-radius: 8px;
+            border-left: 4px solid {factor_info['color']};
+            margin: 15px 0;
+            border: 1px solid #262730;
+        ">
+            <div style="display: flex; align-items: center;">
+                <span style="font-size: 20px; margin-right: 10px;">{factor_info['icon']}</span>
+                <span style="color: #a3a8b8; font-size: 14px;">{factor_info['description']}</span>
+            </div>
+        </div>
+        """, unsafe_allow_html=True)
+    
+    with col_env2:
+        st.markdown("#### ⚙️ View Configuration", unsafe_allow_html=True)
+        st.markdown("<br>", unsafe_allow_html=True)  # Add some spacing
+        
+        # Style the toggle with better visual representation
+        view_toggle = st.toggle(
+            "📊 Static View / 🎬 Animated View", 
+            value=False, 
+            key="accumulated_env_toggle"
+        )
+        
+        # Add explanatory text for the toggle
+        if view_toggle:
+            st.markdown("""
+            <div style="color: #a3a8b8; font-size: 12px; margin-top: 10px;">
+                🎬 <strong>Animated Mode:</strong> Shows evolution over time
+            </div>
+            """, unsafe_allow_html=True)
+        else:
+            st.markdown("""
+            <div style="color: #a3a8b8; font-size: 12px; margin-top: 10px;">
+                📊 <strong>Static Mode:</strong> Shows cumulative relationship
+            </div>
+            """, unsafe_allow_html=True)
+    
     # Load the environmental factor data
     df_env = load_dataframe_for_interested_correlational_env_indicator(st.session_state.interested_correlational_env_factor)
-        # Create correlation visualizations
-    col1, col2 = st.columns(2)
-    with col1:
+    
+    # Main correlation visualization
+    st.markdown("### 🎯 Correlation Visualization", unsafe_allow_html=True)
+    
+    if st.session_state.accumulated_env_toggle == False:
         st.plotly_chart(static_bubble(df_filtered, df_env, st.session_state.interested_correlational_env_factor), use_container_width=True, key="static_bubble_chart")
-    with col2:
+    else:
         st.plotly_chart(animated_bubble(df_filtered, df_env, st.session_state.interested_correlational_env_factor), use_container_width=True, key="animated_bubble_chart")
     
-
+    # Environmental factor breakdown section
+    st.markdown("### 📋 Environmental Factor Breakdown", unsafe_allow_html=True)
+    # Filter based on selected countries and time period only
+    df_env = df_env[df_env['REF_AREA'].isin(df_filtered['REF_AREA']) & df_env['TIME_PERIOD'].isin(df_filtered['TIME_PERIOD'])]
+    st.plotly_chart(simple_bar(df_env, 'REF_AREA', 'MEASURE', st.session_state.interested_correlational_env_factor), use_container_width=True, key="env_bar_chart")
 elif st.session_state.topic == 'Nutrient Input and Output':
     st.write("This topic is not yet implemented.")
 

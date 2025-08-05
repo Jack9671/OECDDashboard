@@ -8,6 +8,93 @@ import plotly.graph_objects as go
 from plotly.subplots import make_subplots
 from pathlib import Path
 import warnings
+
+def get_measure_info(measure_code):
+    """Get descriptive information about a measure code"""
+    # Sector mappings
+    sector_map = {
+        'TR': 'Transport (TR)',
+        'IPP': 'Power Production (IPP)', 
+        'EI': 'Energy Industries (EI)',
+        'AGR': 'Agriculture (AGR)',
+        'OTH_SECTOR': 'Other Sectors (OTH_SECTOR)',
+        'MIC': 'Manufacturing & Construction (MIC)',
+        'WASTE': 'Waste Management (WASTE)',
+        'OTH': 'Other (OTH)'
+    }
+    
+    # Nature source mappings
+    nature_map = {
+        'SETT_CO2': 'Settlements CO2 (SETT_CO2)',
+        'CL_CH4': 'Cropland CH4 (CL_CH4)',
+        'CL_CO2': 'Cropland CO2 (CL_CO2)', 
+        'OT_N2O': 'Other Land N2O (OT_N2O)',
+        'GL_N2O': 'Grassland N2O (GL_N2O)',
+        'GL_CO2': 'Grassland CO2 (GL_CO2)',
+        'GL_CH4': 'Grassland CH4 (GL_CH4)',
+        'F_N2O': 'Forest N2O (F_N2O)',
+        'WET_N2O': 'Wetlands N2O (WET_N2O)',
+        'HWP_CO2': 'Wood Products CO2 (HWP_CO2)',
+        'F_CH4': 'Forest CH4 (F_CH4)',
+        'F_CO2': 'Forest CO2 (F_CO2)',
+        'SETT_N2O': 'Settlements N2O (SETT_N2O)',
+        'SETT_CH4': 'Settlements CH4 (SETT_CH4)',
+        'CL_N2O': 'Cropland N2O (CL_N2O)',
+        'WET_CH4': 'Wetlands CH4 (WET_CH4)',
+        'OTHER_CO2': 'Other CO2 (OTHER_CO2)',
+        'OTHER_N2O': 'Other N2O (OTHER_N2O)',
+        'OT_CO2': 'Other Land CO2 (OT_CO2)',
+        'OTHER_CH4': 'Other CH4 (OTHER_CH4)',
+        'OT_CH4': 'Other Land CH4 (OT_CH4)',
+        'WET_CO2': 'Wetlands CO2 (WET_CO2)'
+    }
+    
+    # Gas type mappings
+    gas_map = {
+        'CH4': 'Methane (CH4)',
+        'CO2': 'Carbon Dioxide (CO2)',
+        'HFC': 'Hydrofluorocarbons (HFC)',
+        'N2O': 'Nitrous Oxide (N2O)',
+        'PFC': 'Perfluorocarbons (PFC)',
+        'SF': 'Sulfur Hexafluoride (SF)'
+    }
+    
+    # Check if it's a sector
+    if measure_code in sector_map:
+        return {
+            'type': 'sector',
+            'icon': '🏗️',
+            'name': sector_map[measure_code],
+            'suffix': 'Sector'
+        }
+    
+    # Check if it's a nature source
+    elif measure_code in nature_map:
+        return {
+            'type': 'nature_source',
+            'icon': '⚗️',
+            'name': nature_map[measure_code],
+            'suffix': 'Source'
+        }
+    
+    # Check if it's a gas type
+    elif measure_code in gas_map:
+        return {
+            'type': 'gas',
+            'icon': '🏭',
+            'name': gas_map[measure_code],
+            'suffix': 'Gas'
+        }
+    
+    # Default fallback
+    else:
+        return {
+            'type': 'unknown',
+            'icon': '❓',
+            'name': measure_code,
+            'suffix': 'Measure'
+        }
+
 def summary_statistics(df: pd.DataFrame, user_config: dict[str, str]) -> pd.DataFrame:
     """Calculate summary statistics for the DataFrame."""
     # 3 columns: DESCRIPTION, START_VALUE, END_VALUE, PERCENTAGE_CHANGE
@@ -19,7 +106,7 @@ def summary_statistics(df: pd.DataFrame, user_config: dict[str, str]) -> pd.Data
     df_end.rename(columns={'OBS_VALUE': 'END_VALUE'}, inplace=True)
     summary_df = pd.merge(df_start, df_end, on='REF_AREA', how='outer')
     summary_df['PERCENTAGE_CHANGE'] = ((summary_df['END_VALUE'] - summary_df['START_VALUE']) / summary_df['START_VALUE'].replace(0, np.nan)) * 100
-    summary_df['DESCRIPTION'] = 'Greenhouse Gas Ouput'
+    summary_df['DESCRIPTION'] = 'Greenhouse Gas Output'
     summary_df = summary_df[['DESCRIPTION', 'START_VALUE', 'END_VALUE', 'PERCENTAGE_CHANGE']]
     return summary_df
 
@@ -76,6 +163,30 @@ def section_2(df: pd.DataFrame):
             </div>
         </div>
         """, unsafe_allow_html=True)
+        # Determine the appropriate icon and label based on the selected measures
+        measure_types = st.session_state.user_config['selected_MEASURE']
+        
+        # Get measure info for the first measure to determine the type
+        if measure_types:
+            first_measure_info = get_measure_info(measure_types[0])
+            measure_icon = first_measure_info['icon']
+            
+            # Check if all measures are of the same type
+            all_same_type = all(get_measure_info(m)['type'] == first_measure_info['type'] for m in measure_types)
+            
+            if all_same_type:
+                if first_measure_info['type'] == 'sector':
+                    measure_label = "Selected Sectors"
+                elif first_measure_info['type'] == 'nature_source':
+                    measure_label = "Selected Nature Sources"
+                else:
+                    measure_label = "Selected Gases"
+            else:
+                measure_label = "Selected Measures"
+        else:
+            measure_icon = "❓"
+            measure_label = "Selected Measures"
+            
         st.markdown(f"""
         <div style="
             background-color: #0e1117;
@@ -85,14 +196,32 @@ def section_2(df: pd.DataFrame):
             margin: 5px 0;
             border: 1px solid #262730;
         ">
-            <div style="color: #a3a8b8; font-size: 20px; margin-bottom: 5px;">🏭 Selected Gases</div>
+            <div style="color: #a3a8b8; font-size: 20px; margin-bottom: 5px;">{measure_icon} {measure_label}</div>
             <div style="color: #fafafa; font-size: 15px; font-weight: bold;">
                 {', '.join(st.session_state.user_config['selected_MEASURE'])}
             </div>
         </div>
         """, unsafe_allow_html=True)
     
-    # Add a styled analysis question
+    # Add a styled analysis question with dynamic measure type
+    measure_types = st.session_state.user_config['selected_MEASURE']
+    
+    if measure_types:
+        first_measure_info = get_measure_info(measure_types[0])
+        all_same_type = all(get_measure_info(m)['type'] == first_measure_info['type'] for m in measure_types)
+        
+        if all_same_type:
+            if first_measure_info['type'] == 'sector':
+                measure_type_text = "Sector-based Greenhouse Gas Output"
+            elif first_measure_info['type'] == 'nature_source':
+                measure_type_text = "Nature Source-based Greenhouse Gas Output"
+            else:
+                measure_type_text = "Greenhouse Gas Output"
+        else:
+            measure_type_text = "Greenhouse Gas Output"
+    else:
+        measure_type_text = "Greenhouse Gas Output"
+        
     st.markdown(f"""
     <div style="
         background-color: #1a1d29;
@@ -103,7 +232,7 @@ def section_2(df: pd.DataFrame):
         border: 1px solid #262730;
     ">
         <div style="color: #fafafa; font-size: 15px; font-style: italic;">
-            💡Showing how much percentage Greenhouse Gas Output in the <span style="font-size: 20px; font-weight: bold;">{st.session_state.user_config['selected_TIME_PERIOD'][0]}</span> has increased or decreased relative to the greenhouse gas output in <span style="font-size: 20px; font-weight: bold;">{st.session_state.user_config['selected_TIME_PERIOD'][-1]}</span>.
+            💡Showing how much percentage {measure_type_text} in the <span style="font-size: 20px; font-weight: bold;">{st.session_state.user_config['selected_TIME_PERIOD'][0]}</span> has increased or decreased relative to the greenhouse gas output in <span style="font-size: 20px; font-weight: bold;">{st.session_state.user_config['selected_TIME_PERIOD'][-1]}</span>.
         </div>
     </div>
     """, unsafe_allow_html=True)
@@ -134,6 +263,9 @@ def section_2(df: pd.DataFrame):
         for i, stat in enumerate(summary_stats):
             col_idx = i % 4
             with cols[col_idx]:
+                # Get measure information using the helper function
+                measure_info = get_measure_info(stat['measure'])
+                
                 # Determine color based on percentage change
                 if stat['percentage_change'] > 0:
                     color = "🔴"  # Red for increase (bad for emissions)
@@ -173,7 +305,7 @@ def section_2(df: pd.DataFrame):
                 ">
                     <div style="display: flex; align-items: center; margin-bottom: 10px;">
                         <span style="font-size: 15px; margin-right: 10px;">{color}</span>
-                        <span style="font-weight: bold; font-size: 25px; color: #fafafa;">{stat['measure']} Gas</span>
+                        <span style="font-weight: bold; font-size: 25px; color: #fafafa;">{measure_info['name']}</span>
                     </div>
                     <div style="color:  #a3a8b8; font-size: 15px; margin-bottom: 0px;">
                         {start_year}: <strong style="color: #fafafa;">{start_formatted}</strong> | {end_year}: <strong style="color: #fafafa;">{end_formatted}</strong>
