@@ -16,7 +16,7 @@ st.set_page_config(
 
 def main():
     # Create sidebar navigation
-    st.sidebar.title("📊 Navigation")
+    st.sidebar.title("Navigation")
     
     # Page selection
     pages = {
@@ -54,7 +54,7 @@ def show_introduction_page():
         Welcome to the OECD Environmental Data Dashboard. This platform provides insights into:
         
         - Environmental indicators across OECD countries
-        - Greenhouse gas emission trends
+        - Greenhouse gas output trends
         - Agricultural and land use patterns
         - Sustainable development metrics
         """)
