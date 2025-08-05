@@ -7,9 +7,9 @@ st.title("📖 Introduction to OECD Environmental Dashboard")
 
 st.markdown("""
 <div style="background-color: #0e1117; padding: 20px; border-radius: 10px; border-left: 5px solid #4CAF50; margin: 20px 0; border: 1px solid #262730;">
-    <h3 style="color: #4CAF50; margin-top: 0;">🌍 Welcome to the Enhanced OECD Environmental Analytics Platform</h3>
+    <h3 style="color: #4CAF50; margin-top: 0;">🌍 Welcome to the OECD Environmental Analytics Platform</h3>
     <p style="color: #a3a8b8; font-size: 16px; line-height: 1.6;">
-        Our advanced dashboard provides comprehensive visualization and analysis of OECD environmental data with cutting-edge features including dynamic font sizing, country-specific color coding, and interactive correlation analysis. Explore complex environmental relationships through intuitive, responsive visualizations.
+        Our dashboard provides comprehensive visualization and analysis of OECD environmental data with cutting-edge features including dynamic font sizing, country-specific color coding, and interactive correlation analysis. Explore complex environmental relationships through intuitive, responsive visualizations.
     </p>
 </div>
 """, unsafe_allow_html=True)
@@ -148,12 +148,6 @@ with col1:
     <div style="background-color: #0e1117; padding: 20px; border-radius: 10px; border-left: 5px solid #ff6b6b; border: 1px solid #262730;">
         <h3 style="color: #ff6b6b; margin-top: 0;">🌿 Nguyen Xuan Duy Thai</h3>
         <p style="color: #fafafa; font-weight: bold;">Lead Developer - Greenhouse Gas Topic</p>
-        <ul style="color: #a3a8b8;">
-            <li>Enhanced waterfall charts with dynamic font sizing</li>
-            <li>Country-specific color coding system</li>
-            <li>Advanced chart refactoring and optimization</li>
-            <li>Geographic visualization enhancements</li>
-        </ul>
     </div>
     """, unsafe_allow_html=True)
 
