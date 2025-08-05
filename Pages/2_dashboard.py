@@ -398,7 +398,7 @@ if st.session_state.topic == 'Greenhouse Gas':
     # section 4: Correlational analysis with enhanced styling
     st.markdown("---")  # Add a separator line
     st.markdown("""
-    <div style="text-align: center; margin: 30px 0;">
+    <div style="text-align: center; margin: 0 0;">
         <h2 style="color: #fafafa; font-size: 32px; margin-bottom: 10px;">
             🔗 Relationship between GHS Output and Environmental Factors
         </h2>
