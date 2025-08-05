@@ -259,7 +259,40 @@ if st.session_state.topic == 'Greenhouse Gas':
     #section 2: display summary statistics 
     section_2(df_filtered)
     #section 3: display static map and animated map
-    st.write(f"## 🌍 Geographic View")
+    
+    # Geographic View section with enhanced styling
+    st.markdown("""
+    <div style="text-align: center; margin: 40px 0 30px 0;">
+        <h2 style="
+            color: #fafafa; 
+            font-size: 36px; 
+            margin-bottom: 15px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+            background: linear-gradient(45deg, #27ae60, #2ecc71);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        ">
+            🌍 Geographic View
+        </h2>
+        <p style="
+            color: #a3a8b8; 
+            font-size: 18px; 
+            margin-bottom: 20px;
+            font-style: italic;
+        ">
+            Explore spatial patterns and global distributions with interactive maps
+        </p>
+        <div style="
+            width: 100px; 
+            height: 3px; 
+            background: linear-gradient(45deg, #27ae60, #2ecc71); 
+            margin: 0 auto;
+            border-radius: 2px;
+        "></div>
+    </div>
+    """, unsafe_allow_html=True)
+    
     st.selectbox(
         "Select Projection Type",
         ['airy', 'aitoff', 'albers', 'albers usa', 'august', 'azimuthal equal area', 'azimuthal equidistant', 'baker', 'bertin1953', 'boggs', 'bonne', 'bottomley', 'bromley', 'collignon', 'conic conformal', 'conic equal area', 'conic equidistant', 'craig', 'craster', 'cylindrical equal area', 'cylindrical stereographic', 'eckert1', 'eckert2', 'eckert3', 'eckert4', 'eckert5', 'eckert6', 'eisenlohr', 'equal earth', 'equirectangular', 'fahey', 'foucaut', 'foucaut sinusoidal', 'ginzburg4', 'ginzburg5', 'ginzburg6', 'ginzburg8', 'ginzburg9', 'gnomonic', 'gringorten', 'gringorten quincuncial', 'guyou', 'hammer', 'hill', 'homolosine', 'hufnagel', 'hyperelliptical', 'kavrayskiy7', 'lagrange', 'larrivee', 'laskowski', 'loximuthal', 'mercator', 'miller', 'mollweide', 'mt flat polar parabolic', 'mt flat polar quartic', 'mt flat polar sinusoidal', 'natural earth', 'natural earth1', 'natural earth2', 'nell hammer', 'nicolosi', 'orthographic', 'patterson', 'peirce quincuncial', 'polyconic', 'rectangular polyconic', 'robinson', 'satellite', 'sinu mollweide', 'sinusoidal', 'stereographic', 'times', 'transverse mercator', 'van der grinten', 'van der grinten2', 'van der grinten3', 'van der grinten4', 'wagner4', 'wagner6', 'wiechel', 'winkel tripel', 'winkel3'],
