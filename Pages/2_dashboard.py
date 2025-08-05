@@ -407,8 +407,9 @@ if st.session_state.topic == 'Greenhouse Gas':
         </p>
     </div>
     """, unsafe_allow_html=True)
-    
-    st.markdown("#### 🌱 Select Environmental Factor", unsafe_allow_html=True)
+    col1, col2 = st.columns(2)
+    with col1:
+        st.markdown("#### 🌱 Select Environmental Factor", unsafe_allow_html=True)
     env_factor_options = [
         'Agricultural Energy Consumption (Tonnes of oil equivalent)', 
         'Agricultural Land Area (Hectares)', 
@@ -433,12 +434,12 @@ if st.session_state.topic == 'Greenhouse Gas':
             'color': '#3498db'
         }
     }
-    
-    selected_env_factor = st.selectbox(
-        "",
-        env_factor_options,
-        key="interested_correlational_env_factor"
-    )
+    with col2:
+        selected_env_factor = st.selectbox(
+            "",
+            env_factor_options,
+            key="interested_correlational_env_factor"
+        )
     
     # Display factor description
     factor_info = factor_descriptions[selected_env_factor]
