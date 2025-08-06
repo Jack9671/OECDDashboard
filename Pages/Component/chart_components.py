@@ -371,10 +371,12 @@ def animated_hor_bar(df: pd.DataFrame, col_to_rank: str) -> go.Figure:
         
         for x_val in x_values:
             if x_val < 0:
-                colors.append('red')  # Red for negative values (absorption)
+                # Keep original color but make it slightly different for negative values
+                original_color = color_map.get(trace.name, '#1f77b4')  # Default plotly blue if not found
+                colors.append(original_color)  # Use original color for negative values too
                 text_positions.append('outside')  # Position text outside for negative bars
             else:
-                colors.append(color_map.get(trace.name, 'green'))  # Original color for positive
+                colors.append(color_map.get(trace.name, '#1f77b4'))  # Original color for positive
                 text_positions.append('auto')  # Auto position for positive bars
         
         # Update trace with conditional coloring (this will be applied to all frames)
@@ -387,18 +389,12 @@ def animated_hor_bar(df: pd.DataFrame, col_to_rank: str) -> go.Figure:
             # Add year information to hover
             trace.customdata = [frame.name] * len(trace.x)
             
-            # Apply conditional coloring to each frame
+            # Apply conditional coloring to each frame - keep original colors
             x_values = trace.x if hasattr(trace, 'x') else []
-            colors = []
             
-            for x_val in x_values:
-                if x_val < 0:
-                    colors.append('red')  # Red for negative values
-                else:
-                    colors.append(color_map.get(trace.name, 'green'))  # Original color
-            
-            if colors and len(colors) == len(x_values):
-                trace.marker.color = colors[0] if len(set(colors)) == 1 else colors
+            # Always use the original color mapping for each country/category
+            original_color = color_map.get(trace.name, '#1f77b4')
+            trace.marker.color = original_color
                 
             # Update text position for better visibility with negative values
             trace.textposition = 'auto'
