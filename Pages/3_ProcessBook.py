@@ -11,16 +11,17 @@ st.header("📄 Title Page")
 
 st.markdown("""
 ### OECD Environmental Data Visualization Dashboard
-**Interactive Analysis of Greenhouse Gas Output and Agricultural Environmental Indicators**
+**Interactive Analysis of Greenhouse Gas Output and Nutrient Input/Output**
 
 **🔗 Project Links:**
 - **GitHub Repository**: [https://github.com/Jack9671/OECDDashBoard](https://github.com/Jack9671/OECDDashBoard)
-- **Live Dashboard**: Streamlit Application (Local Deployment)
+- **Live Dashboard**: https://oecd-dashboard.streamlit.app/#data-source
 
 **👥 Team Information:**
 - **Team Name**: Singularity
 - **Developer 1**: Nguyen Xuan Duy Thai (104979528)
-- **Developer 2** Nguyen Minh Dang ()
+- **Developer 2** Nguyen Minh Dang()
+- -**Completed on**: 06/08/2025
 - **Word Count**: Approximately 2,500 words
 """)
 
