@@ -168,45 +168,22 @@ st.markdown("""
 
 **Attributes and Data Types:**
 - **REF_AREA**: Categorical (ISO country codes and names)
-- **TIME_PERIOD**: Ordinal/Interval (years from 1990-2023)
+- **TIME_PERIOD**: Discrete (individual years)
 - **MEASURE**: Categorical (output measurement types)
-- **UNIT**: Categorical (tonnes CO2 equivalent, percentage, index)
-- **OBS_VALUE**: Ratio/Quantitative (output values, growth rates)
-- **FLAGS**: Categorical (data quality indicators)
+- **UNIT**: Categorical (tonnes CO2 equivalent, tonnes oil equivalent, hectares, persons, cubic metres)
+- **OBS_VALUE**: Continuous (output values)
 
 **Data Coverage:**
-- **Temporal**: 1990-2023 (34 years of data)
-- **Geographic**: 38 OECD member countries plus selected aggregates
+- **Temporal**: 1990-2021 (31 years of data)
+- **Geographic**: all OECD member countries except aggregate regions
 - **Granularity**: Annual measurements with quarterly updates
 
 **Excluded Data:**
-- Aggregate regions (EU27, OECD Total) excluded from country-specific analysis
-- Provisional data flagged for quality review
-- Non-standard measurement units converted or excluded
-- Countries with insufficient time series data (<10 years)
+- Aggregate regions (EU27', 'EU', 'EU27_2020', 'EU28') excluded from country-specific analysis
 """)
 
 st.markdown("#### 2.1.2 Nutrient Input/Output Data Details")
-st.markdown("""
-**Current Status**: Data collection and processing in progress
-
-**Planned Dataset Structure:**
-- **Type**: Structured tabular data (CSV format)
-- **Focus**: Agricultural nutrient flow indicators
-
-**Planned Attributes:**
-- **REF_AREA**: Categorical (country/region names)
-- **TIME_PERIOD**: Ordinal/Interval (annual data)
-- **NUTRIENT_TYPE**: Categorical (nitrogen, phosphorus, potassium)
-- **INPUT_SOURCE**: Categorical (fertilizers, manure, other inputs)
-- **OBS_VALUE**: Ratio/Quantitative (nutrient amounts in tonnes)
-- **UNIT**: Categorical (measurement units)
-
-**Data Processing Approach:**
-- Focus on individual countries (exclude aggregate regions)
-- Standardize measurement units across datasets
-- Validate data quality and completeness
-- Derive efficiency indicators and trends
+st.markdown(""" will be updated
 """)
 
 st.subheader("2.2 Data Processing")
@@ -366,11 +343,6 @@ st.markdown("""
 **Usability Evaluation Method:**
 
 **Evaluation Framework**: Think-aloud protocol with task-based scenarios
-
-**Participants**: 3 domain experts in environmental policy and data analysis
-- Environmental policy researcher (PhD level)
-- Data analyst with government agency background
-- Academic with expertise in climate economics
 
 **Evaluation Tasks:**
 1. **Navigation Task**: Find and compare greenhouse gas trends for top 5 producing countries
