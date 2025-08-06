@@ -21,7 +21,8 @@ def main():
     # Page selection
     pages = {
         "📖 Introduction": "introduction", 
-        "📈 Dashboard": "dashboard"
+        "📈 Dashboard": "dashboard",
+        "📋 Process Book": "processbook"
     }
     
     selected_page = st.sidebar.selectbox(
@@ -37,6 +38,8 @@ def main():
         show_introduction_page()
     elif page_key == "dashboard":
         show_dashboard_page()
+    elif page_key == "processbook":
+        show_processbook_page()
 
 def show_introduction_page():
     """Display the introduction page"""
@@ -70,6 +73,18 @@ def show_dashboard_page():
     except Exception as e:
         st.error(f"Error loading Dashboard page: {e}")
         st.markdown("## Dashboard loading error. Please check the dashboard configuration.")
+
+def show_processbook_page():
+    """Display the process book page"""
+    try:
+        # Import and run the process book page
+        import importlib.util
+        spec = importlib.util.spec_from_file_location("processbook", pages_dir / "3_ProcessBook.py")
+        processbook_module = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(processbook_module)
+    except Exception as e:
+        st.error(f"Error loading Process Book page: {e}")
+        st.markdown("## Process Book loading error. Please check the page configuration.")
 
 if __name__ == "__main__":
     main()

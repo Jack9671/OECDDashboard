@@ -53,6 +53,7 @@ OECDDashBoard/
 ├── Pages/
 │   ├── 1_Introduction.py            # introduction page
 │   ├── 2_dashboard.py               # Main dashboard 
+│   ├── 3_ProcessBook.py            # Process book documentation
 │   └── Component/
 │       ├── summary_statistics.py             # summary statistics
 │       └── chart_components.py      # All chart functions (modularized)
