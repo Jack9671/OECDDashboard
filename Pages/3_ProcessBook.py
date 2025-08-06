@@ -331,26 +331,12 @@ st.markdown("""
 - **User Satisfaction**: Post-task satisfaction ratings (1-5 scale)
 - **Cognitive Load**: Perceived difficulty of understanding visualizations
 
-**Key Findings:**
-
 **Positive Feedback:**
 - Multi-projection geographic maps highly appreciated for global perspective analysis
 - Interactive toggle features enable efficient analytical workflow switching
 - Sunburst charts provide excellent subtopic overview and navigation aid
 - Correlation analysis with bubble charts effectively shows environmental relationships
 - Professional chart aesthetics suitable for policy presentation materials
-
-**Areas for Improvement Identified:**
-- Some projection types may be unfamiliar to general users
-- Loading time for animated visualizations could be optimized
-- Additional export formats for charts would be beneficial
-- Tutorial or help section for projection selection would aid usability
-
-**Implemented Improvements:**
-- Streamlined projection selection with default orthographic view
-- Session state management for persistent user preferences
-- Optimized chart rendering with Plotly caching
-- Clear toggle labels with descriptive icons for better user guidance
 
 **Validation Results:**
 - **Task Completion Rate**: 92% (average across all tasks)
@@ -406,19 +392,8 @@ The OECD Environmental Data Visualization Dashboard successfully transforms comp
 
 **Domain Knowledge:**
 - Deep understanding of OECD environmental data structures
-- Greenhouse gas accounting methodologies and standards
-- Environmental policy context and user requirements
+- Environmental context of data and user requirements
 - Data quality assessment and validation techniques
-
-**Project Impact:**
-The dashboard serves as a proof-of-concept for how interactive visualizations can enhance environmental policy analysis. The modular design enables future expansion to additional environmental indicators, creating a comprehensive platform for OECD environmental data exploration.
-
-**Future Development:**
-- Integration of more advanced statistical analysis features
-- Enhanced animation controls with play/pause/speed options
-- Additional environmental indicators beyond the current greenhouse gas focus
-- Export functionality for charts and filtered datasets
-- Mobile-responsive design optimization
 """)
 
 # 6. References Section
