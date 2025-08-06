@@ -21,7 +21,7 @@ st.markdown("""
 - **Team Name**: Singularity
 - **Developer 1**: Nguyen Xuan Duy Thai (104979528)
 - **Developer 2** Nguyen Minh Dang()
-- -**Completed on**: 06/08/2025
+- **Completed on**: 06/08/2025
 - **Word Count**: Approximately 2,500 words
 """)
 
