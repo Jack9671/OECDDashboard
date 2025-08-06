@@ -33,7 +33,6 @@ Our dashboard aims to:
 - Impact on environmental sustainability
 
 ## Other secondary important datasources for relationship analysis
-- **Population**: Population data for OECD countries
 - **Agricultural Land**: Agricultural land area in OECD countries
 - **Agricultural Energy Use**: Energy consumption in agriculture
 - **Agricultural Water Use**: Water usage in agricultural practices
