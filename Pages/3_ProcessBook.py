@@ -11,7 +11,7 @@ st.header("📄 Title Page")
 
 st.markdown("""
 ### OECD Environmental Data Visualization Dashboard
-**Interactive Analysis of Greenhouse Gas Emissions and Agricultural Environmental Indicators**
+**Interactive Analysis of Greenhouse Gas Output and Agricultural Environmental Indicators**
 
 **🔗 Project Links:**
 - **GitHub Repository**: [https://github.com/Jack9671/OECDDashBoard](https://github.com/Jack9671/OECDDashBoard)
@@ -55,7 +55,7 @@ Environmental policy decisions require evidence-based insights derived from comp
 
 **Project Scope:**
 This dashboard addresses two critical environmental domains:
-1. **Greenhouse Gas Emissions**: Comprehensive analysis of CO2 and other greenhouse gas emissions with different accounting methods (with/without LULUCF, by sectors, by nature sources)
+1. **Greenhouse Gas Output**: Comprehensive analysis of CO2 and other greenhouse gas output with different accounting methods (with/without LULUCF, by sectors, by nature sources)
 2. **Nutrient Input/Output**: Agricultural environmental indicators focusing on nutrient flow analysis (Note: Data collection for this topic is ongoing)
 
 **Target Users:**
@@ -71,41 +71,41 @@ st.markdown("""
 The completed visualization empowers users to answer critical environmental policy questions through interactive data exploration.
 """)
 
-st.markdown("#### 1.2.1 Greenhouse Gas Emission Analysis")
+st.markdown("#### 1.2.1 Greenhouse Gas Output Analysis")
 st.markdown("""
 **Primary Questions Addressed:**
 
 **Temporal Analysis:**
-- How have greenhouse gas emissions evolved across OECD countries from 1990 to present?
-- Which countries show the most significant emission reductions or increases over time?
-- What are the seasonal and yearly patterns in emission data?
+- How have greenhouse gas output evolved across OECD countries from 1990 to present?
+- Which countries show the most significant output reductions or increases over time?
+- What are the seasonal and yearly patterns in output data?
 
 **Comparative Analysis:**
-- Which OECD countries are the largest greenhouse gas emitters in absolute terms?
-- How do countries compare when emissions are normalized by population or GDP?
-- What is the ranking of countries by emission intensity per economic sector?
+- Which OECD countries are the largest greenhouse gas producers in absolute terms?
+- How do countries compare when output are normalized by population or GDP?
+- What is the ranking of countries by output intensity per economic sector?
 
 **Sectoral Insights:**
-- Which economic sectors contribute most to greenhouse gas emissions in different countries?
-- How has the sectoral distribution of emissions changed over time?
-- Which sectors show the most promising emission reduction trends?
+- Which economic sectors contribute most to greenhouse gas output in different countries?
+- How has the sectoral distribution of output changed over time?
+- Which sectors show the most promising output reduction trends?
 
 **LULUCF Impact Analysis:**
-- How do Land Use, Land-Use Change, and Forestry (LULUCF) activities affect national emission inventories?
-- Which countries benefit most from including LULUCF in their emission calculations?
-- What is the contribution of nature-based solutions to emission reductions?
+- How do Land Use, Land-Use Change, and Forestry (LULUCF) activities affect national output inventories?
+- Which countries benefit most from including LULUCF in their output calculations?
+- What is the contribution of nature-based solutions to output reductions?
 
 **Policy Impact Assessment:**
-- How do emission trends correlate with major environmental policy implementations?
-- Which countries demonstrate best practices in emission reduction strategies?
-- What is the effectiveness of international climate agreements on national emission trajectories?
+- How do output trends correlate with major environmental policy implementations?
+- Which countries demonstrate best practices in output reduction strategies?
+- What is the effectiveness of international climate agreements on national output trajectories?
 
 **Benefits of the Greenhouse Gas Visualization:**
 - **Policy Development**: Evidence-based support for climate policy formulation
-- **International Cooperation**: Facilitate knowledge sharing of successful emission reduction strategies
+- **International Cooperation**: Facilitate knowledge sharing of successful output reduction strategies
 - **Progress Monitoring**: Track national and international climate goal achievements
 - **Resource Allocation**: Identify priority sectors and countries for climate finance
-- **Public Awareness**: Communicate complex emission data to stakeholders and citizens
+- **Public Awareness**: Communicate complex output data to stakeholders and citizens
 """)
 
 st.markdown("#### 1.2.2 Nutrient Input/Output Analysis")
@@ -155,23 +155,23 @@ st.markdown("""
 - Comprehensive metadata documentation
 """)
 
-st.markdown("#### 2.1.1 Greenhouse Gas Emission Data Details")
+st.markdown("#### 2.1.1 Greenhouse Gas Output Data Details")
 st.markdown("""
 **Dataset Types**: Structured tabular data (CSV format)
 
 **Key Datasets:**
-1. **GreenHouseGasWithoutLULUCF.csv**: Direct emissions excluding land use
-2. **GreenHouseGasFromLULUCF.csv**: Emissions from land use changes
-3. **GreenHouseGasWithLULUCF.csv**: Total emissions including land use
-4. **GreenHouseGasBySectors.csv**: Sectoral breakdown of emissions
-5. **GreenHouseGasByNatureSources.csv**: Emissions by natural source categories
+1. **GreenHouseGasWithoutLULUCF.csv**: Direct output excluding land use
+2. **GreenHouseGasFromLULUCF.csv**: Output from land use changes
+3. **GreenHouseGasWithLULUCF.csv**: Total output including land use
+4. **GreenHouseGasBySectors.csv**: Sectoral breakdown of output
+5. **GreenHouseGasByNatureSources.csv**: Output by natural source categories
 
 **Attributes and Data Types:**
 - **REF_AREA**: Categorical (ISO country codes and names)
 - **TIME_PERIOD**: Ordinal/Interval (years from 1990-2023)
-- **MEASURE**: Categorical (emission measurement types)
+- **MEASURE**: Categorical (output measurement types)
 - **UNIT**: Categorical (tonnes CO2 equivalent, percentage, index)
-- **OBS_VALUE**: Ratio/Quantitative (emission values, growth rates)
+- **OBS_VALUE**: Ratio/Quantitative (output values, growth rates)
 - **FLAGS**: Categorical (data quality indicators)
 
 **Data Coverage:**
@@ -218,7 +218,7 @@ st.markdown("""
 - **Version Control**: Git tracking of all data processing steps
 """)
 
-st.markdown("#### 2.2.1 Greenhouse Gas Emission Data Processing")
+st.markdown("#### 2.2.1 Greenhouse Gas Output Data Processing")
 st.markdown("""
 **Data Cleaning Process:**
 
@@ -241,7 +241,7 @@ check_data_completeness(df)
 - Flag discontinuous data series
 
 **4. Unit Standardization:**
-- Convert all emission values to tonnes CO2 equivalent
+- Convert all output values to tonnes CO2 equivalent
 - Standardize percentage calculations
 - Create indexed time series (base year = 100)
 
@@ -251,10 +251,10 @@ check_data_completeness(df)
 - Flag estimated or provisional data
 
 **Derived Variables:**
-- **Emission per capita**: Total emissions / population
-- **Emission intensity**: Emissions / GDP (PPP)
+- **Output per capita**: Total output / population
+- **Output intensity**: Output / GDP (PPP)
 - **Annual growth rates**: Year-over-year percentage changes
-- **Cumulative emissions**: Running totals since 1990
+- **Cumulative output**: Running totals since 1990
 - **Ranking indicators**: Country rankings by various metrics
 
 **Data Aggregation:**
@@ -349,7 +349,7 @@ st.markdown("""
 - **Professional Styling**: Publication-ready chart aesthetics
 
 **Design Justification:**
-The waterfall chart enhancement addresses a critical user need for comparing country contributions to global emissions. Dynamic font sizing ensures readability across different data densities, while consistent color coding facilitates pattern recognition across multiple visualizations.
+The waterfall chart enhancement addresses a critical user need for comparing country contributions to global output. Dynamic font sizing ensures readability across different data densities, while consistent color coding facilitates pattern recognition across multiple visualizations.
 """)
 
 st.markdown("""
@@ -382,9 +382,9 @@ st.markdown("""
 - Academic with expertise in climate economics
 
 **Evaluation Tasks:**
-1. **Navigation Task**: Find and compare greenhouse gas trends for top 5 emitting countries
-2. **Analysis Task**: Identify countries with best emission reduction performance 2010-2020
-3. **Visualization Task**: Use different chart types to understand sectoral emission patterns
+1. **Navigation Task**: Find and compare greenhouse gas trends for top 5 producing countries
+2. **Analysis Task**: Identify countries with best output reduction performance 2010-2020
+3. **Visualization Task**: Use different chart types to understand sectoral output patterns
 4. **Insight Task**: Derive policy recommendations from the visualization
 
 **Evaluation Metrics:**
@@ -446,7 +446,7 @@ The OECD Environmental Data Visualization Dashboard successfully transforms comp
 
 **Analytical Value:**
 - Facilitates evidence-based environmental policy development
-- Enables rapid identification of trends and patterns in greenhouse gas emissions
+- Enables rapid identification of trends and patterns in greenhouse gas output
 - Supports comparative analysis across OECD member countries
 - Provides foundation for expanding to additional environmental indicators
 
@@ -527,11 +527,11 @@ Participants were provided with:
 - Evaluation consent form
 
 **Task Scenarios:**
-1. **Country Comparison Task**: "You are preparing a briefing for an international climate summit. Identify the top 5 greenhouse gas emitting OECD countries and analyze their emission trends from 2010-2020."
+1. **Country Comparison Task**: "You are preparing a briefing for an international climate summit. Identify the top 5 greenhouse gas producing OECD countries and analyze their output trends from 2010-2020."
 
-2. **Policy Analysis Task**: "As an environmental policy advisor, determine which countries have achieved the most significant emission reductions and identify potential best practices."
+2. **Policy Analysis Task**: "As an environmental policy advisor, determine which countries have achieved the most significant output reductions and identify potential best practices."
 
-3. **Sectoral Analysis Task**: "Analyze the contribution of different economic sectors to greenhouse gas emissions across major OECD economies."
+3. **Sectoral Analysis Task**: "Analyze the contribution of different economic sectors to greenhouse gas output across major OECD economies."
 
 **Post-Evaluation Questionnaire:**
 - Ease of navigation (1-5 scale)
