@@ -54,7 +54,7 @@ OECDDashBoard/
 │   ├── 1_Introduction.py            # introduction page
 │   ├── 2_dashboard.py               # Main dashboard 
 │   └── Component/
-│       ├── section_2.py             # summary statistics
+│       ├── summary_statistics.py             # summary statistics
 │       └── chart_components.py      # All chart functions (modularized)
 └── DataSource/
     ├── Energy/                      # Agricultural energy consumption data
@@ -74,7 +74,7 @@ OECDDashBoard/
     ├── Land/                        # Agricultural land area data
     │   ├── AgriculturalLand.csv
     │   └── AgriculturalLand.csv.backup               # Original data backup
-    ├── NutrientInputOutput/         # Nutrient flow data (placeholder)
+    ├── NutrientInputOutput/         # Nutrient flow data (not yet added)
     ├── Population/                  # Population data for correlation analysis
     │   ├── AnnualPopulationOECDCountry.csv
     │   └── AnnualPopulationOECDCountry.csv.backup    # Original data backup

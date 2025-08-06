@@ -9,6 +9,7 @@ from plotly.subplots import make_subplots
 from pathlib import Path
 import warnings
 
+#helper
 def _get_measure_info(measure_code):
     """Get descriptive information about a measure code"""
     # Sector mappings
@@ -95,6 +96,7 @@ def _get_measure_info(measure_code):
             'suffix': 'Measure'
         }
 
+#main function to be exported
 def summary_statistics(df: pd.DataFrame, user_config: dict[str, str]) -> pd.DataFrame:
     """Calculate summary statistics for the DataFrame."""
     # 3 columns: DESCRIPTION, START_VALUE, END_VALUE, PERCENTAGE_CHANGE
@@ -200,11 +202,11 @@ def summary_statistics(df: pd.DataFrame):
         
         # Get measure info for the first measure to determine the type
         if measure_types:
-            first_measure_info = get_measure_info(measure_types[0])
+            first_measure_info = _get_measure_info(measure_types[0])
             measure_icon = first_measure_info['icon']
             
             # Check if all measures are of the same type
-            all_same_type = all(get_measure_info(m)['type'] == first_measure_info['type'] for m in measure_types)
+            all_same_type = all(_get_measure_info(m)['type'] == first_measure_info['type'] for m in measure_types)
             
             if all_same_type:
                 if first_measure_info['type'] == 'sector':
