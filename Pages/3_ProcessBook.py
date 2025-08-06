@@ -95,11 +95,6 @@ st.markdown("""
 - Which countries benefit most from including LULUCF in their output calculations?
 - What is the contribution of nature-based solutions to output reductions?
 
-**Policy Impact Assessment:**
-- How do output trends correlate with major environmental policy implementations?
-- Which countries demonstrate best practices in output reduction strategies?
-- What is the effectiveness of international climate agreements on national output trajectories?
-
 **Benefits of the Greenhouse Gas Visualization:**
 - **Policy Development**: Evidence-based support for climate policy formulation
 - **International Cooperation**: Facilitate knowledge sharing of successful output reduction strategies
