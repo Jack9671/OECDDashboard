@@ -703,26 +703,39 @@ def bar_line(df: pd.DataFrame, x_axis_variable: str, category_to_stack: str, cat
     # Calculate font size based on the maximum text length
     uniform_font_size = calculate_font_size(max_text_length, bar_width_px)
 
+    # Calculate the actual visual top of stacked bars for annotations and line trace
+    # For relative bar mode, we need to separate positive and negative contributions
+    visual_tops = []
+    for i, row in df_pivoted.iterrows():
+        # Get all measure values for this row (excluding x_axis and total columns)
+        values = row[measure_columns_for_text].values
+        
+        # Calculate cumulative positive values (visual top of bars)
+        positive_sum = sum(val for val in values if val > 0)
+        
+        visual_tops.append(positive_sum)
+
     # Add total value annotations on top of each stacked bar with uniform font sizing
     for i, row in df_pivoted.iterrows():
         fig_stacked.add_annotation(
             x=row[x_axis_variable],
-            y=row['total'],
-            text=formatted_texts[i],
+            y=visual_tops[i],  # Use visual top instead of total
+            text=formatted_texts[i],  # Still show the net total value as text
             showarrow=False,
             yshift=10,
             font=dict(size=uniform_font_size, color="white", family="Arial")
         )
-    # Add line trace for totals (net sum)
+    
+    # Add line trace for totals (net sum) - aligned with visual bar tops
     fig_stacked.add_trace(go.Scatter(
         x=df_pivoted[x_axis_variable],
-        y=df_pivoted['total'],
+        y=visual_tops,  # Use visual tops instead of total
         mode='lines+markers',
-        name='net accumulative sum',
+        name='positive accumulative sum',
         line=dict(color='yellow', width=3, shape='linear'),
         marker=dict(size=7, color='yellow', symbol='circle'),
         yaxis='y',
-        hovertemplate=f'<b>{x_axis_variable}:</b> %{{x}}<br><b>Total:</b> %{{y:,.0f}} Tonnes of CO2-equivalent<extra></extra>'
+        hovertemplate=f'<b>{x_axis_variable}:</b> %{{x}}<br><b>Positive Total:</b> %{{y:,.0f}} Tonnes of CO2-equivalent<extra></extra>'
     ))
     return fig_stacked
 
