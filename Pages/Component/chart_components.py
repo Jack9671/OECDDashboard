@@ -560,7 +560,7 @@ def static_bubble(df_ghs: pd.DataFrame, df_x: pd.DataFrame, x_axis_label: str) -
     xref="paper", yref="paper",
     x=0.5, y=0,  # Position below the plot
     showarrow=False, font=dict(size=15, color="red"))
-    fig.update_layout(title_font=dict(size=30), title_x=0.08, font=dict(size=20))
+    fig.update_layout(title_font=dict(size=25), title_x=0.08, font=dict(size=20))
     return fig
 
 def animated_bubble(df_ghs: pd.DataFrame, df_x: pd.DataFrame, x_axis_label: str) -> go.Figure:
