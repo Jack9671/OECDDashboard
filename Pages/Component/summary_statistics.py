@@ -1,6 +1,6 @@
 from altair import value
 import streamlit as st
-from Component import section_2
+from Pages.Component import summary_statistics
 import pandas as pd
 import numpy as np
 import plotly.express as px
@@ -9,7 +9,7 @@ from plotly.subplots import make_subplots
 from pathlib import Path
 import warnings
 
-def get_measure_info(measure_code):
+def _get_measure_info(measure_code):
     """Get descriptive information about a measure code"""
     # Sector mappings
     sector_map = {
@@ -110,7 +110,7 @@ def summary_statistics(df: pd.DataFrame, user_config: dict[str, str]) -> pd.Data
     summary_df = summary_df[['DESCRIPTION', 'START_VALUE', 'END_VALUE', 'PERCENTAGE_CHANGE']]
     return summary_df
 
-def section_2(df: pd.DataFrame):
+def summary_statistics(df: pd.DataFrame):
     # Summary Statistics section with enhanced styling
     st.markdown("""
     <div style="text-align: center; margin: 40px 0 30px 0;">
@@ -239,8 +239,8 @@ def section_2(df: pd.DataFrame):
     measure_types = st.session_state.user_config['selected_MEASURE']
     
     if measure_types:
-        first_measure_info = get_measure_info(measure_types[0])
-        all_same_type = all(get_measure_info(m)['type'] == first_measure_info['type'] for m in measure_types)
+        first_measure_info = _get_measure_info(measure_types[0])
+        all_same_type = all(_get_measure_info(m)['type'] == first_measure_info['type'] for m in measure_types)
         
         if all_same_type:
             if first_measure_info['type'] == 'sector':

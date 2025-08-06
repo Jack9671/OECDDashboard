@@ -1,7 +1,7 @@
 import re
 from altair import value
 import streamlit as st
-from Component.section_2 import section_2
+from Pages.Component.summary_statistics import summary_statistics
 from Component.chart_components import *
 import pandas as pd
 import numpy as np
@@ -257,7 +257,7 @@ if st.session_state.topic == 'Greenhouse Gas':
     st.session_state.user_config = user_config(df_selected_subtopic)
     df_filtered = filter_data(df_selected_subtopic, st.session_state.user_config)
     #section 2: display summary statistics 
-    section_2(df_filtered)
+    summary_statistics(df_filtered)
     #section 3: display static map and animated map
     
     # Geographic View section with enhanced styling
@@ -495,5 +495,6 @@ if st.session_state.topic == 'Greenhouse Gas':
     # Filter based on selected countries and time period only
     df_env = df_env[df_env['REF_AREA'].isin(df_filtered['REF_AREA']) & df_env['TIME_PERIOD'].isin(df_filtered['TIME_PERIOD'])]
     st.plotly_chart(water_fall(df_env, 'REF_AREA', 'MEASURE', st.session_state.interested_correlational_env_factor), use_container_width=True, key="waterfall_chart")
-elif st.session_state.topic == 'Nutrient Input and Output':
+
+elif st.session_state.topic == 'Nutrient Input and Output': 
     st.write("This topic is not yet implemented.")
