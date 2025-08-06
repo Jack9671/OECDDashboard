@@ -94,7 +94,6 @@ st.markdown("""
 **LULUCF Impact Analysis:**
 - How do Land Use, Land-Use Change, and Forestry (LULUCF) activities affect national output inventories?
 - Which countries benefit most from including LULUCF in their output calculations?
-- What is the contribution of nature-based solutions to output reductions?
 
 **Benefits of the Greenhouse Gas Visualization:**
 - **Policy Development**: Evidence-based support for climate policy formulation
