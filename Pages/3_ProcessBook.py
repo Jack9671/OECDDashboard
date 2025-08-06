@@ -19,10 +19,8 @@ st.markdown("""
 
 **👥 Team Information:**
 - **Team Name**: Environmental Data Visualizers
-- **Developer**: Jack9671
-- **Student ID**: [Your Student ID]
-- **Tutorial**: [Your Tutorial Day and Time]
-- **Semester**: Semester 4, 2025
+- **Developer 1**: Nguyen Xuan Duy Thai (104979528)
+- **Developer 2** Nguyen Minh Dang ()
 - **Word Count**: Approximately 2,500 words
 """)
 
