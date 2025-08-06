@@ -193,7 +193,6 @@ for file_path in csv_files:
 **3. Regional Data Filtering:**
 - Remove aggregate regional entities (EU27, EU, EU27_2020, EU28) to focus on individual country analysis
 - Preserve only OECD member country data for consistent geographical scope
-- Validate data coverage across retained countries
 
 **4. Unit Standardization and Scaling:**
 - Apply unit multiplier scaling: `OBS_VALUE = OBS_VALUE * (10 ** UNIT_MULT)`
@@ -337,7 +336,7 @@ st.markdown("""
 **Positive Feedback:**
 - Multi-projection geographic maps highly appreciated for global perspective analysis
 - Interactive toggle features enable efficient analytical workflow switching
-- Sunburst charts provide excellent topic overview and navigation aid
+- Sunburst charts provide excellent subtopic overview and navigation aid
 - Correlation analysis with bubble charts effectively shows environmental relationships
 - Professional chart aesthetics suitable for policy presentation materials
 
