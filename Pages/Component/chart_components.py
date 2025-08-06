@@ -371,12 +371,10 @@ def animated_hor_bar(df: pd.DataFrame, col_to_rank: str) -> go.Figure:
         
         for x_val in x_values:
             if x_val < 0:
-                # Keep original color but make it slightly different for negative values
-                original_color = color_map.get(trace.name, '#1f77b4')  # Default plotly blue if not found
-                colors.append(original_color)  # Use original color for negative values too
+                colors.append('red')  # Red for negative values (absorption)
                 text_positions.append('outside')  # Position text outside for negative bars
             else:
-                colors.append(color_map.get(trace.name, '#1f77b4'))  # Original color for positive
+                colors.append(color_map.get(trace.name, 'green'))  # Original color for positive
                 text_positions.append('auto')  # Auto position for positive bars
         
         # Update trace with conditional coloring (this will be applied to all frames)
@@ -389,12 +387,18 @@ def animated_hor_bar(df: pd.DataFrame, col_to_rank: str) -> go.Figure:
             # Add year information to hover
             trace.customdata = [frame.name] * len(trace.x)
             
-            # Apply conditional coloring to each frame - keep original colors
+            # Apply conditional coloring to each frame
             x_values = trace.x if hasattr(trace, 'x') else []
+            colors = []
             
-            # Always use the original color mapping for each country/category
-            original_color = color_map.get(trace.name, '#1f77b4')
-            trace.marker.color = original_color
+            for x_val in x_values:
+                if x_val < 0:
+                    colors.append('red')  # Red for negative values
+                else:
+                    colors.append(color_map.get(trace.name, 'green'))  # Original color
+            
+            if colors and len(colors) == len(x_values):
+                trace.marker.color = colors[0] if len(set(colors)) == 1 else colors
                 
             # Update text position for better visibility with negative values
             trace.textposition = 'auto'
@@ -703,39 +707,26 @@ def bar_line(df: pd.DataFrame, x_axis_variable: str, category_to_stack: str, cat
     # Calculate font size based on the maximum text length
     uniform_font_size = calculate_font_size(max_text_length, bar_width_px)
 
-    # Calculate the actual visual top of stacked bars for annotations and line trace
-    # For relative bar mode, we need to separate positive and negative contributions
-    visual_tops = []
-    for i, row in df_pivoted.iterrows():
-        # Get all measure values for this row (excluding x_axis and total columns)
-        values = row[measure_columns_for_text].values
-        
-        # Calculate cumulative positive values (visual top of bars)
-        positive_sum = sum(val for val in values if val > 0)
-        
-        visual_tops.append(positive_sum)
-
     # Add total value annotations on top of each stacked bar with uniform font sizing
     for i, row in df_pivoted.iterrows():
         fig_stacked.add_annotation(
             x=row[x_axis_variable],
-            y=visual_tops[i],  # Use visual top instead of total
-            text=formatted_texts[i],  # Still show the net total value as text
+            y=row['total'],
+            text=formatted_texts[i],
             showarrow=False,
             yshift=10,
             font=dict(size=uniform_font_size, color="white", family="Arial")
         )
-    
-    # Add line trace for totals (net sum) - aligned with visual bar tops
+    # Add line trace for totals (net sum)
     fig_stacked.add_trace(go.Scatter(
         x=df_pivoted[x_axis_variable],
-        y=visual_tops,  # Use visual tops instead of total
+        y=df_pivoted['total'],
         mode='lines+markers',
-        name='positive accumulative sum',
+        name='net accumulative sum',
         line=dict(color='yellow', width=3, shape='linear'),
         marker=dict(size=7, color='yellow', symbol='circle'),
         yaxis='y',
-        hovertemplate=f'<b>{x_axis_variable}:</b> %{{x}}<br><b>Positive Total:</b> %{{y:,.0f}} Tonnes of CO2-equivalent<extra></extra>'
+        hovertemplate=f'<b>{x_axis_variable}:</b> %{{x}}<br><b>Total:</b> %{{y:,.0f}} Tonnes of CO2-equivalent<extra></extra>'
     ))
     return fig_stacked
 
