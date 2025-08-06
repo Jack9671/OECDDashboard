@@ -272,29 +272,7 @@ for file_path in csv_files:
 """)
 
 st.markdown("#### 2.2.2 Nutrient Input/Output Data Processing")
-st.markdown("""
-**Planned Processing Pipeline:**
-
-**1. Data Harmonization:**
-- Standardize nutrient measurement units (kg/hectare, tonnes)
-- Align temporal coverage across countries
-- Validate agricultural land area data for normalization
-
-**2. Quality Control:**
-- Check for logical consistency in input/output relationships
-- Identify and handle missing or anomalous values
-- Cross-validate with agricultural production data
-
-**3. Derived Indicators:**
-- Nutrient use efficiency ratios
-- Input intensity per unit of agricultural output
-- Trend analysis indicators
-- Comparative efficiency metrics
-
-**4. Integration Preparation:**
-- Align with greenhouse gas data for correlation analysis
-- Prepare visualization-ready datasets
-- Create summary statistics for dashboard displays
+st.markdown(""" will be updated
 """)
 
 # 3. Visualisation Design Section
