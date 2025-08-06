@@ -385,7 +385,7 @@ The OECD Environmental Data Visualization Dashboard successfully transforms comp
 
 **Analytical Value:**
 - Facilitates evidence-based environmental policy development
-- Enables rapid identification of trends and patterns in greenhouse gas output
+- Enables rapid identification of trends and patterns in greenhouse gas output and nutrient input/output
 - Supports comparative analysis across OECD member countries
 - Provides foundation for expanding to additional environmental indicators
 
