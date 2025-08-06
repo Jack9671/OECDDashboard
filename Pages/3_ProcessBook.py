@@ -581,8 +581,5 @@ st.markdown("""
 *This process book documents the development of the OECD Environmental Data Visualization Dashboard, 
 demonstrating the application of data visualization principles and user-centered design methodologies 
 in creating effective analytical tools for environmental policy research.*
-
-**Document Version**: 1.0  
-**Last Updated**: August 6, 2025  
 **Project Repository**: [https://github.com/Jack9671/OECDDashBoard](https://github.com/Jack9671/OECDDashBoard)
 """)
