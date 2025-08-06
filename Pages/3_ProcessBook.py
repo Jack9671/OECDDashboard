@@ -109,27 +109,7 @@ st.markdown("""
 **Note**: The nutrient input/output component is currently under development. Data collection and processing are ongoing for this environmental indicator.
 
 **Planned Questions to Address:**
-
-**Agricultural Sustainability:**
-- How have total nutrient inputs (fertilizers, livestock manure, other nutrient inputs) changed over time in different countries?
-- Which countries have the highest or lowest nutrient input efficiency in recent years?
-- What are the trends in nutrient input for agricultural leading countries over the selected period?
-
-**Environmental Impact:**
-- Are there noticeable increases or decreases in nutrient input for specific countries or years?
-- How do different countries compare in terms of nutrient input patterns and environmental sustainability?
-- What is the relationship between nutrient inputs and agricultural productivity?
-
-**Policy Implications:**
-- Which countries demonstrate best practices in sustainable nutrient management?
-- How do nutrient input trends correlate with agricultural policy changes?
-- What are the implications for water quality and ecosystem health?
-
-**Future Implementation Benefits:**
-- **Sustainable Agriculture**: Support development of environmentally friendly farming policies
-- **Water Quality Protection**: Monitor nutrient pollution risks to water bodies
-- **Agricultural Efficiency**: Identify opportunities for improved nutrient use efficiency
-- **Environmental Health**: Assess ecosystem impacts of agricultural practices
+ will be updated
 """)
 
 # 2. Data Section
