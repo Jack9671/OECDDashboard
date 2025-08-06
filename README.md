@@ -47,26 +47,40 @@ This dashboard provides comprehensive visualization and analysis of OECD environ
 OECDDashBoard/
 ├── main.py                           # Main application entry point
 ├── requirements.txt                  # Python dependencies
-├── REFACTORING_SUMMARY.md           # Documentation of recent improvements
+├── README.md                         # Project documentation and setup guide
+├── data_preprocessing.ipynb          # Data cleaning and preprocessing notebook
+├── Process Book.docx                # Project documentation
 ├── Pages/
-│   ├── 1_Introduction.py            # Enhanced introduction page
-│   ├── 2_dashboard.py               # Main dashboard (refactored)
+│   ├── 1_Introduction.py            # introduction page
+│   ├── 2_dashboard.py               # Main dashboard 
 │   └── Component/
-│       ├── section_2.py             # Statistical analysis components
-│       └── chart_components.py      # All chart functions (NEW)
-├── DataSource/
-│   ├── GreenHouseGas/               # Greenhouse gas emission data
-│   │   ├── GreenHouseGasWithoutLULUCF.csv
-│   │   ├── GreenHouseGasFromLULUCF.csv
-│   │   ├── GreenHouseGasWithLULUCF.csv
-│   │   ├── GreenHouseGasBySectors.csv
-│   │   └── GreenHouseGasByNatureSources.csv
-│   ├── Energy/                      # Agricultural energy consumption
-│   ├── Land/                        # Agricultural land data
-│   ├── Population/                  # Population data for correlation
-│   └── WaterAbstraction/            # Water usage data
-├── exploration_AgriLand.ipynb       # Agricultural data exploration
-└── Process Book.docx                # Project documentation
+│       ├── section_2.py             # summary statistics
+│       └── chart_components.py      # All chart functions (modularized)
+└── DataSource/
+    ├── Energy/                      # Agricultural energy consumption data
+    │   ├── AgriculturalEnergyConsumption.csv
+    │   └── AgriculturalEnergyConsumption.csv.backup  # Original data backup
+    ├── GreenHouseGas/               # Greenhouse gas emission data
+    │   ├── GreenHouseGasWithoutLULUCF.csv
+    │   ├── GreenHouseGasWithoutLULUCF.csv.backup     # Original data backup
+    │   ├── GreenHouseGasFromLULUCF.csv
+    │   ├── GreenHouseGasFromLULUCF.csv.backup        # Original data backup
+    │   ├── GreenHouseGasWithLULUCF.csv
+    │   ├── GreenHouseGasWithLULUCF.csv.backup        # Original data backup
+    │   ├── GreenHouseGasBySectors.csv
+    │   ├── GreenHouseGasBySectors.csv.backup         # Original data backup
+    │   ├── GreenHouseGasByNatureSources.csv
+    │   └── GreenHouseGasByNatureSources.csv.backup   # Original data backup
+    ├── Land/                        # Agricultural land area data
+    │   ├── AgriculturalLand.csv
+    │   └── AgriculturalLand.csv.backup               # Original data backup
+    ├── NutrientInputOutput/         # Nutrient flow data (placeholder)
+    ├── Population/                  # Population data for correlation analysis
+    │   ├── AnnualPopulationOECDCountry.csv
+    │   └── AnnualPopulationOECDCountry.csv.backup    # Original data backup
+    └── WaterAbstraction/            # Agricultural water usage data
+        ├── AgriculturalWaterAbstraction.csv
+        └── AgriculturalWaterAbstraction.csv.backup   # Original data backup
 ```
 
 ## 🔧 Installation & Setup
@@ -109,6 +123,12 @@ OECDDashBoard/
 - **Year Range Selection**: Analyze specific time periods with range sliders
 - **Hover Information**: Get detailed data points by hovering over charts
 - **Responsive Design**: Charts automatically adjust font sizes for optimal readability
+
+### Data Management & Safety
+- **Automatic Backup System**: Original CSV files are automatically backed up before preprocessing
+- **Data Recovery**: Easy restoration from `.backup` files if needed
+- **Safe Data Processing**: Non-destructive data cleaning with original preservation
+- **Version Control**: Track data modifications with backup timestamps
 
 ### Export & Analysis
 - Export visualizations in various formats
