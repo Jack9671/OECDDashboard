@@ -18,7 +18,7 @@ st.markdown("""
 - **Live Dashboard**: Streamlit Application (Local Deployment)
 
 **👥 Team Information:**
-- **Team Name**: Environmental Data Visualizers
+- **Team Name**: Singularity
 - **Developer 1**: Nguyen Xuan Duy Thai (104979528)
 - **Developer 2** Nguyen Minh Dang ()
 - **Word Count**: Approximately 2,500 words
