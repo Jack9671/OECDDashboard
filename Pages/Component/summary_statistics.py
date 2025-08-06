@@ -298,7 +298,7 @@ def summary_statistics(df: pd.DataFrame):
             col_idx = i % 4
             with cols[col_idx]:
                 # Get measure information using the helper function
-                measure_info = get_measure_info(stat['measure'])
+                measure_info = _get_measure_info(stat['measure'])
                 
                 # Determine color based on percentage change
                 if stat['percentage_change'] > 0:
