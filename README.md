@@ -40,6 +40,7 @@ This dashboard provides comprehensive visualization and analysis of OECD environ
 - **Backend**: Python 3.11+
 - **Architecture**: Modular component-based design
 
+
 ## 📁 Project Structure
 
 ```
