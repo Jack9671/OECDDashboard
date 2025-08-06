@@ -222,45 +222,53 @@ st.markdown("#### 2.2.1 Greenhouse Gas Output Data Processing")
 st.markdown("""
 **Data Cleaning Process:**
 
-**1. Data Import and Validation:**
+**1. Automated Data Discovery and Loading:**
 ```python
-# Standardized import process with error handling
-df = pd.read_csv(file_path, encoding='utf-8')
-validate_required_columns(df)
-check_data_completeness(df)
+# Recursive CSV file discovery from DataSource folder
+csv_files = load_all_csv_files(data_source_path)
+for file_path in csv_files:
+    relative_path = file_path.relative_to(data_source_path)
+    key_name = f"{relative_path.parts[0]}_{relative_path.stem}"
+    df = pd.read_csv(file_path)
+    dfs[key_name] = df
 ```
 
-**2. Country Code Standardization:**
-- Convert country names to ISO 3-letter codes
-- Remove aggregate regions (EU27, OECD, World)
-- Validate country membership in OECD
+**2. Column Standardization and Selection:**
+- Identify and retain only essential columns from ideal set: ['REF_AREA', 'MEASURE', 'UNIT_MEASURE', 'TIME_PERIOD', 'OBS_VALUE', 'UNIT_MULT']
+- Remove non-essential metadata columns to focus on analytical data
+- Handle missing columns gracefully with fallback to existing structure
 
-**3. Time Series Processing:**
-- Convert TIME_PERIOD to datetime format
-- Fill gaps in time series using interpolation where appropriate
-- Flag discontinuous data series
+**3. Regional Data Filtering:**
+- Remove aggregate regional entities (EU27, EU, EU27_2020, EU28) to focus on individual country analysis
+- Preserve only OECD member country data for consistent geographical scope
+- Validate data coverage across retained countries
 
-**4. Unit Standardization:**
-- Convert all output values to tonnes CO2 equivalent
-- Standardize percentage calculations
-- Create indexed time series (base year = 100)
+**4. Unit Standardization and Scaling:**
+- Apply unit multiplier scaling: `OBS_VALUE = OBS_VALUE * (10 ** UNIT_MULT)`
+- Convert all values to standard measurement units
+- Ensure consistency across different data files and measurement scales
 
-**5. Data Quality Assurance:**
-- Remove outliers using statistical methods (IQR)
-- Validate data ranges and logical consistency
-- Flag estimated or provisional data
+**5. Sector-Specific Data Cleaning:**
+- For GreenHouseGasBySectors: Remove '_SECTOR' suffix from MEASURE column
+- Replace 'Other sectors' with 'Other' for cleaner categorization
+- Standardize sector naming conventions across datasets
 
-**Derived Variables:**
-- **Output per capita**: Total output / population
-- **Output intensity**: Output / GDP (PPP)
-- **Annual growth rates**: Year-over-year percentage changes
-- **Cumulative output**: Running totals since 1990
-- **Ranking indicators**: Country rankings by various metrics
+**6. Data Safety and Backup:**
+- Automatic backup creation (.csv.backup) before any data modification
+- Non-destructive processing with original file preservation
+- Version tracking through backup timestamps
 
-**Data Aggregation:**
-- Regional summaries for comparative analysis
-- Sectoral aggregations for policy analysis
-- Time period aggregations (5-year averages)
+**Data Processing Statistics:**
+- Processed 15+ CSV files across multiple environmental indicator categories
+- Retained 6 core columns per dataset for analytical consistency
+- Removed EU aggregate regions while preserving 38+ individual OECD countries
+- Applied unit scaling to ensure proper numerical representation
+
+**Quality Assurance Measures:**
+- Row count validation before and after processing
+- Column existence checks before applying transformations
+- Error handling for missing files or corrupted data
+- Comprehensive logging of all processing steps and outcomes
 """)
 
 st.markdown("#### 2.2.2 Nutrient Input/Output Data Processing")
