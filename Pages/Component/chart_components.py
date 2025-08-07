@@ -482,7 +482,7 @@ def tree_map(df: pd.DataFrame, groupby_var: str, category_name: str, value_filte
             showarrow=False, font=dict(size=16), color='white')
         fig.update_layout(
             template='plotly_dark',
-            title=f"Tree Map of {category_name}",
+            title=f"Proportion of {category_name}",
             width=700, height=600, font=dict(size=25), title_font=dict(size=25), title_x=0.3
         )
         return fig
