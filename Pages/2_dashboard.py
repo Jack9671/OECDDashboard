@@ -496,5 +496,182 @@ if st.session_state.topic == 'Greenhouse Gas':
     df_env = df_env[df_env['REF_AREA'].isin(df_filtered['REF_AREA']) & df_env['TIME_PERIOD'].isin(df_filtered['TIME_PERIOD'])]
     st.plotly_chart(water_fall(df_env, 'REF_AREA', 'MEASURE', st.session_state.interested_correlational_env_factor), use_container_width=True, key="waterfall_chart")
 
-elif st.session_state.topic == 'Nutrient Input and Output': 
-    st.write("This topic is not yet implemented.")
+
+# Nutrient Inputs and Outputs section
+elif st.session_state.topic == 'Nutrient Input and Output':
+    st.markdown("## 🌾 Nutrient Input and Output")
+    st.markdown("Key insights and trends from your selected nutrient data")
+    st.markdown("---")
+
+    # Load nutrient datasets
+    nutrient_files = {
+        'fertilisers': 'Fertilisers.csv',
+        'livestock_manure': 'Livestock_manure_production.csv',
+        'other_nutrient_inputs': 'Other_nutrient_inputs.csv',
+        'forage': 'Forage.csv',
+        'harvested_crops': 'Harvested_crops.csv'
+    }
+
+    all_dfs = {}
+    for name, file in nutrient_files.items():
+        try:
+            df = pd.read_csv(BASE_DIR / 'Nutrient_inputs_and_outputs' / file)
+            df.columns = [col.strip().replace(' ', '_').upper() for col in df.columns]
+            if 'REF_AREA' in df.columns:
+                df = df[~df['REF_AREA'].isin(['EU27', 'EU', 'EU27_2020', 'EU28'])]
+            if 'UNIT_MULT' in df.columns:
+                df['OBS_VALUE'] = pd.to_numeric(df['OBS_VALUE'], errors='coerce')
+                df['OBS_VALUE'] *= 10 ** df['UNIT_MULT'].fillna(0)
+            all_dfs[name] = df
+        except Exception as e:
+            st.warning(f"Failed to load {name}: {e}")
+
+    # Manual mapping from notebook
+    country_name_map = {
+        'IDN': 'Indonesia', 'ISL': 'Iceland', 'NZL': 'New Zealand', 'KOR': 'South Korea',
+        'MEX': 'Mexico', 'TUR': 'Turkey', 'PHL': 'Philippines', 'VNM': 'Vietnam',
+        'UKR': 'Ukraine', 'RUS': 'Russia', 'ARG': 'Argentina', 'AUS': 'Australia',
+        'AUT': 'Austria', 'BEL': 'Belgium', 'BGR': 'Bulgaria', 'BRA': 'Brazil',
+        'CAN': 'Canada', 'CHE': 'Switzerland', 'CHN': 'China (People’s Republic of)',
+        'COL': 'Colombia', 'CRI': 'Costa Rica', 'CYP': 'Cyprus', 'CZE': 'Czechia',
+        'DEU': 'Germany', 'DNK': 'Denmark', 'ESP': 'Spain', 'EST': 'Estonia',
+        'FIN': 'Finland', 'FRA': 'France', 'GBR': 'United Kingdom', 'GRC': 'Greece',
+        'HRV': 'Croatia', 'HUN': 'Hungary', 'IND': 'India', 'IRL': 'Ireland',
+        'ITA': 'Italy', 'JPN': 'Japan', 'KAZ': 'Kazakhstan', 'LTU': 'Lithuania',
+        'LUX': 'Luxembourg', 'LVA': 'Latvia', 'MLT': 'Malta', 'NLD': 'Netherlands',
+        'NOR': 'Norway', 'POL': 'Poland', 'PRT': 'Portugal', 'ROU': 'Romania',
+        'SVK': 'Slovak Republic', 'SVN': 'Slovenia', 'SWE': 'Sweden', 'ZAF': 'South Africa'
+    }
+
+    st.markdown("### 🧶 Summary Statistics")
+    combined = pd.concat(all_dfs.values())
+    combined['TIME_PERIOD'] = pd.to_numeric(combined['TIME_PERIOD'], errors='coerce')
+    dataset_info = {
+        "records": len(combined),
+        "time_min": int(combined['TIME_PERIOD'].min()),
+        "time_max": int(combined['TIME_PERIOD'].max()),
+        "countries": combined['REF_AREA'].nunique(),
+        "country_list": combined['REF_AREA'].unique().tolist()
+    }
+
+    col1, col2 = st.columns(2, gap="large")
+    with col1:
+        st.info(f"**Dataset Information**\n\n{dataset_info['records']} records")
+        st.success(f"**Time Period**\n\n{dataset_info['time_min']} - {dataset_info['time_max']}")
+    with col2:
+        display_names = [country_name_map.get(c, c) for c in dataset_info['country_list'][:10]]
+        countries_display = ', '.join(display_names) + ('...' if len(dataset_info['country_list']) > 10 else '')
+        st.warning(f"**Countries Included**\n\n{dataset_info['countries']} countries: {countries_display}")
+        st.error("**Sources**\n\nFertiliser, Livestock Manure, Others")
+
+    st.markdown("---")
+
+    # Year filter
+    year_min = int(combined['TIME_PERIOD'].min())
+    year_max = int(combined['TIME_PERIOD'].max())
+    year_range = st.slider("Select Year Range", min_value=year_min, max_value=year_max, value=(year_min, year_max), step=1)
+    full_years = pd.Index(range(year_range[0], year_range[1] + 1))
+
+    # Nutrient input analysis
+    nutrient_input_df = pd.concat([
+        all_dfs['fertilisers'], all_dfs['livestock_manure'], all_dfs['other_nutrient_inputs']
+    ], ignore_index=True).drop_duplicates()
+
+    if all(col in nutrient_input_df.columns for col in ['REF_AREA', 'TIME_PERIOD', 'OBS_VALUE']):
+        nutrient_summary = nutrient_input_df.groupby(['REF_AREA', 'TIME_PERIOD'], as_index=False)['OBS_VALUE'].sum()
+        major_countries = nutrient_summary['REF_AREA'].value_counts().head(10).index.tolist()
+
+        filtered_nutrient = nutrient_summary[
+            (nutrient_summary['REF_AREA'].isin(major_countries)) &
+            (nutrient_summary['TIME_PERIOD'].between(*year_range))
+        ]
+        pivot_nutrient = filtered_nutrient.pivot(index='TIME_PERIOD', columns='REF_AREA', values='OBS_VALUE')
+        pivot_nutrient = pivot_nutrient.reindex(full_years, fill_value=0).reset_index().rename(columns={'index': 'Year'})
+        pivot_nutrient.columns.name = None
+        pivot_nutrient.rename(columns={col: country_name_map.get(col, col) for col in pivot_nutrient.columns}, inplace=True)
+
+        st.plotly_chart(px.bar(
+            pivot_nutrient,
+            x='Year',
+            y=pivot_nutrient.columns.drop('Year'),
+            title='Total Nutrient Input by Country (Stacked)',
+            template='plotly_dark',
+            labels={'value': 'Total Input (Tonnes)', 'variable': 'Country'},
+            width=1000, height=600
+        ).update_layout(barmode='stack', xaxis=dict(tickmode='linear')), use_container_width=True)
+
+        st.plotly_chart(px.line(
+            pivot_nutrient,
+            x='Year',
+            y=pivot_nutrient.columns.drop('Year'),
+            title='Nutrient Input Trends by Country',
+            template='plotly_dark',
+            width=1000, height=600,
+            labels={'value': 'Total Input (Tonnes)', 'variable': 'Country'}
+        ).update_traces(mode='lines+markers').update_layout(xaxis=dict(tickmode='linear')), use_container_width=True)
+
+    # Forage chart (restored version)
+    forage = all_dfs.get('forage')
+    if forage is not None and all(col in forage.columns for col in ['REF_AREA', 'TIME_PERIOD', 'OBS_VALUE']):
+        forage = forage[forage['TIME_PERIOD'].between(*year_range)]
+        forage_grouped = forage.groupby(['TIME_PERIOD', 'REF_AREA'])['OBS_VALUE'].sum().reset_index()
+        pivot_forage = forage_grouped.pivot(index='TIME_PERIOD', columns='REF_AREA', values='OBS_VALUE').fillna(0)
+        pivot_forage.columns = [country_name_map.get(code, code) for code in pivot_forage.columns]
+        year_ticks = sorted(pivot_forage.index.tolist())
+
+        st.plotly_chart(px.bar(
+            pivot_forage.reset_index(),
+            y='TIME_PERIOD',
+            x=pivot_forage.columns,
+            orientation='h',
+            title='Forage Production by Country (Stacked)',
+            template='plotly_dark',
+            width=1000, height=600,
+            labels={'value': 'Forage (Tonnes)', 'TIME_PERIOD': 'Year', 'variable': 'Country'}
+        ).update_layout(
+            barmode='stack',
+            yaxis=dict(tickmode='array', tickvals=year_ticks, ticktext=[str(y) for y in year_ticks]),
+            legend_title_text='Country',
+            xaxis_title='Production (Tonnes)',
+            yaxis_title='Year'
+        ), use_container_width=True)
+
+    # Harvested Crops (unchanged)
+    harvested = all_dfs.get('harvested_crops')
+    if harvested is not None and all(col in harvested.columns for col in ['REF_AREA', 'TIME_PERIOD', 'OBS_VALUE']):
+        harvested = harvested[harvested['TIME_PERIOD'].between(*year_range)]
+
+        if not harvested.empty:
+            latest_year = harvested['TIME_PERIOD'].max()
+            crops_latest = harvested[harvested['TIME_PERIOD'] == latest_year]
+            crop_sum = crops_latest.groupby('REF_AREA')['OBS_VALUE'].sum().reset_index()
+            crop_sum['REF_AREA'] = crop_sum['REF_AREA'].map(country_name_map).fillna(crop_sum['REF_AREA'])
+
+            st.plotly_chart(px.pie(
+                crop_sum,
+                names='REF_AREA',
+                values='OBS_VALUE',
+                title=f'Harvested Crops Distribution by Country ({latest_year})',
+                template='plotly_dark',
+                width=700, height=500
+            ).update_traces(textinfo='percent+label', textposition='outside'), use_container_width=True)
+
+            crops_grouped = harvested.groupby(['TIME_PERIOD', 'REF_AREA'])['OBS_VALUE'].sum().reset_index()
+            pivot_crops = crops_grouped.pivot(index='TIME_PERIOD', columns='REF_AREA', values='OBS_VALUE')
+            pivot_crops = pivot_crops.reindex(full_years, fill_value=0).reset_index().rename(columns={'index': 'Year'})
+            pivot_crops.columns.name = None
+            pivot_crops.rename(columns={col: country_name_map.get(col, col) for col in pivot_crops.columns}, inplace=True)
+
+            st.plotly_chart(px.line(
+                pivot_crops,
+                x='Year',
+                y=pivot_crops.columns.drop('Year'),
+                title='Harvested Crops Trends by Country',
+                template='plotly_dark',
+                width=1000, height=600,
+                labels={'value': 'Harvested (Tonnes)', 'variable': 'Country'}
+            ).update_traces(mode='lines+markers').update_layout(xaxis=dict(tickmode='linear')), use_container_width=True)
+
+    st.markdown("---")
+    st.markdown("### 📊 Analytical View")
+    st.dataframe(combined.head(100))
