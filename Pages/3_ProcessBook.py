@@ -20,7 +20,7 @@ st.markdown("""
 **👥 Team Information:**
 - **Team Name**: Singularity
 - **Developer 1**: Nguyen Xuan Duy Thai (104979528)
-- **Developer 2** Nguyen Minh Dang()
+- **Developer 2** Nguyen Minh Dang(104993942)
 - **Completed on**: 06/08/2025
 - **Word Count**: Approximately 2,500 words
 """)
@@ -105,10 +105,39 @@ st.markdown("""
 
 st.markdown("#### 1.2.2 Nutrient Input/Output Analysis")
 st.markdown("""
-**Note**: The nutrient input/output component is currently under development. Data collection and processing are ongoing for this environmental indicator.
+**Primary Questions Addressed:**
+            
+**Temporal Analysis:**
+-How have nutrient inputs and outputs evolved in OECD countries from 2012 to the present?
+-Which countries show the most significant trends in nutrient surplus or deficit over time?
+-What are the long-term patterns in nutrient flows (fertilizers, manure, harvested crops,...)?
 
-**Planned Questions to Address:**
- will be updated
+**Comparative Analysis:**
+-Which countries are the largest contributors of nutrient inputs in absolute terms?
+-How do countries compare when nutrient flows are normalized by agricultural land area or population?
+-What is the ranking of countries by nutrient use efficiency?
+
+**Input-Output Balance:**
+-What are the main sources of nutrient inputs (e.g., fertilizers, livestock manure, forage, other sources)?
+-What are the main nutrient outputs via harvested and grazed biomass?
+-How do national balances of nitrogen (N) and phosphorus (P) reflect agricultural sustainability?
+
+**Sectoral Insights:**
+-Which agricultural sectors (e.g., crops vs. livestock) contribute most to nutrient surpluses or deficits?
+-How have sectoral contributions changed over time?
+-Which sectors or practices show the most promising nutrient efficiency improvements?
+
+**Environmental Risk Assessment:**
+-What is the spatial and temporal distribution of nutrient surpluses in erosion-prone areas?
+-How do water type (e.g., inland vs. marine) and erosion levels affect nutrient loss risk?
+-Which regions are most at risk for nutrient runoff and water quality degradation?
+
+**Benefits of the Nutrient Input/Output Visualization:**
+-Policy Development: Provide evidence for nutrient management and agri-environmental policy design.
+-Sustainable Agriculture: Support strategies to improve nutrient use efficiency and reduce excess.
+-Environmental Protection: Inform actions to reduce nutrient runoff and protect water quality.
+-Monitoring and Evaluation: Track nutrient balance trends and progress towards sustainability goals.
+-Public Communication: Help communicate complex nutrient dynamics to stakeholders and the general public.
 """)
 
 # 2. Data Section
@@ -158,7 +187,54 @@ st.markdown("""
 """)
 
 st.markdown("#### 2.1.2 Nutrient Input/Output Data Details")
-st.markdown(""" will be updated
+st.markdown(""" 
+**Dataset Types:** Structured tabular data (CSV format)
+            
+**Key Datasets:**
+1. **Fertilisers.csv**: Tracks the application of inorganic and organic fertilizers across countries by nutrient type (Nitrogen and Phosphorus).
+2. **Forage.csv**: Captures nutrient outputs (N, P) from grazed or harvested forage such as pasture, green maize, and temporary grasslands.
+3. **Harvested_crops.csv**: Provides nutrient outputs associated with various crop types (e.g., cereals, oil crops, pulses), accounting for nutrient removal through harvest.
+4. **Livestock_manure_production.csv**: Measures nutrient inputs from different livestock types (e.g., cattle, pigs, poultry), detailing both Nitrogen and Phosphorus in manure.
+5. **Other_nutrient_inputs.csv**: Includes nutrient contributions from additional sources such as:
+   - Biological fixation
+   - Atmospheric deposition
+   - Seeds and planting materials   
+            
+**Attributes and Data Types:**
+- **REF_AREA**:	Categorical — Country ISO codes (CAN, IRL, ARG) and names
+- **TIME_PERIOD**:	Discrete — Yearly data (2012–2021 across most datasets)
+- **NUTRIENTS**: Categorical — Two main nutrient types: NITROGEN, PHOSPHORUS
+- **MEASURE**: Categorical — Source/crop/livestock category or process type
+- **UNIT_MEASURE**: Categorical — Always in metric tonnes (T)
+- **OBS_VALUE**: Continuous — Actual value for nutrient input/output (can be negative in manure dataset due to netting methods)
+- **OBS_STATUS**: Categorical — Indicates estimation quality
+            
+**Data Coverage:**
+- **Temporal**: 2012–2021 (10 years); consistent annual measurements across all datasets
+- **Geographic**:	OECD and partner countries; some non-OECD countries like India, South Africa, Argentina included
+- **Nutrients**: Nitrogen (N) and Phosphorus (P) consistently tracked across all sources
+- **Granularity**: National-level aggregation; no sub-national or regional breakdown
+            
+**Granular Categories:**
+- **Fertilisers:**
+   F11: Inorganic fertilisers
+   F12: Organic fertilisers
+- **Harvested Crops:**
+   C211: Cereals
+   C212: Oil crops
+   C213: Pulses
+   C217: Other specific crops
+   C000: Aggregate crops
+- **Forage:**
+   C221: Green maize
+   C222: Pasture and grassland
+- **Livestock Manure:**
+   A11–A14: Livestock categories (cattle, pigs, poultry,...)
+   M21–M23: Other manure management categories
+- **Other Inputs:**
+   B1: Biological fixation
+   C1: Seeds and planting materials
+   L111: Atmospheric deposition
 """)
 
 st.subheader("2.2 Data Processing")
@@ -223,7 +299,42 @@ for file_path in csv_files:
 """)
 
 st.markdown("#### 2.2.2 Nutrient Input/Output Data Processing")
-st.markdown(""" will be updated
+st.markdown(""" 
+**Data Cleaning Process:**
+**1. Manual Data Mapping and Structured Loading:**
+```python
+nutrient_files = {
+    'fertilisers': 'Fertilisers.csv',
+    'livestock_manure': 'Livestock_manure_production.csv',
+    'other_nutrient_inputs': 'Other_nutrient_inputs.csv',
+    'forage': 'Forage.csv',
+    'harvested_crops': 'Harvested_crops.csv'
+}
+```
+            
+**2. Column Standardization and Capitalization:**
+- All column names are cleaned and converted to uppercase with underscores
+- This ensures consistency across all 5 datasets, regardless of formatting differences
+            
+**3. Regional Filtering and Scope Alignment:**
+- EU-level aggregates like 'EU27', 'EU', 'EU28', 'EU27_2020' are removed
+- Focus restricted to individual countries for clear national-level insights
+            
+**4. Unit Scaling and Numeric Validation:**
+- Applied numeric scaling using the UNIT_MULT column to convert observation values to correct magnitude
+- Converted OBS_VALUE to numeric, coercing non-numeric entries to NaN
+
+**5. Dataset Consolidation and Merging:**
+- Combined all 5 datasets into a single structure (combined) for shared processing
+- Individual subsets (inputs, outputs) created using filters and logical grouping
+
+**6. Dynamic User Filtering and Time Selection:**
+- Year range selection added via Streamlit slider
+- Data filtered dynamically based on year range and user interaction
+            
+**7. Country Code Normalization:**
+- Country codes mapped to readable names using a predefined country_name_map
+- Applied to all visualizations and tabular outputs for clarity
 """)
 
 # 3. Visualisation Design Section
