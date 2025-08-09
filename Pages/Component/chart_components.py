@@ -1006,7 +1006,7 @@ def water_fall(df: pd.DataFrame, x_axis_variable: str, category_to_stack: str, c
         title_x=0.1,
         barmode='relative',
         xaxis=dict(title=x_axis_variable),
-        yaxis=dict(title="Gas Output (Tonnes of CO2-equivalent)")
+        yaxis=dict(title=f'{category_name}')
     )
     
     #increase max range of y-axis
